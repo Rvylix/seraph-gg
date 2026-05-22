@@ -92,50 +92,53 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
           </Link>
         </div>
 
-        {/* Bottom overlay — rarity, tags, unit */}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
+        {/* Rarity icon — top right, big */}
+        {rarityIcon && (
+          <div style={{ position: "absolute", top: 12, right: 16, zIndex: 10 }}>
+            <img src={rarityIcon} alt={m.rarity} style={{ height: 48, objectFit: "contain" }} />
+          </div>
+        )}
 
-          {/* Rarity icon */}
-          {rarityIcon && (
-            <img src={rarityIcon} alt={m.rarity} style={{ height: 18, objectFit: "contain", marginBottom: 10, display: "block" }} />
-          )}
+        {/* Bottom overlay — tags + unit card full width */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "16px 16px 20px", zIndex: 3 }}>
 
-          {/* Tags row — attack type, element */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
-            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>
+          {/* Tags row — full width, even spacing */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            <span style={{ flex: 1, textAlign: "center", fontSize: 10, padding: "6px 0", borderRadius: 4, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>
               {m.role}
             </span>
             {m.attack_type !== "none" && (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(0,0,0,0.4)", color: "var(--hbr-muted)", textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
+              <span style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: 10, padding: "6px 0", borderRadius: 4, background: "rgba(0,0,0,0.5)", color: "var(--hbr-muted)", textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
                 {atkIcon && <img src={atkIcon} alt={m.attack_type} style={{ width: 14, height: 14, objectFit: "contain" }} />}
                 {m.attack_type}
               </span>
             )}
             {m.element !== "none" && (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(0,0,0,0.4)", color: elemColor, textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
+              <span style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: 10, padding: "6px 0", borderRadius: 4, background: "rgba(0,0,0,0.5)", color: elemColor, textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
                 {elemIcon && <img src={elemIcon} alt={m.element} style={{ width: 14, height: 14, objectFit: "contain" }} />}
                 {m.element}
               </span>
             )}
             {m.is_limited && (
-              <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.15)", color: "#C8A050", backdropFilter: "blur(4px)" }}>
+              <span style={{ flex: 1, textAlign: "center", fontSize: 10, padding: "6px 0", borderRadius: 4, background: "rgba(200,160,80,0.15)", color: "#C8A050" }}>
                 Limited
               </span>
             )}
           </div>
 
-          {/* Unit link */}
+          {/* Unit card — full width */}
           {unit && (
             <Link href={`/units/profile?id=${from || unit.id}`} style={{ textDecoration: "none", display: "block" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "rgba(7,7,14,0.7)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, backdropFilter: "blur(8px)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "rgba(7,7,14,0.75)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, backdropFilter: "blur(8px)" }}>
                 {unit.image_url && (
-                  <img src={unit.image_url} alt={unit.name} style={{ width: 32, height: 32, borderRadius: 4, objectFit: "cover", objectPosition: "top", flexShrink: 0 }} />
+                  <img src={unit.image_url} alt={unit.name} style={{ width: 36, height: 36, borderRadius: 4, objectFit: "cover", objectPosition: "top", flexShrink: 0 }} />
                 )}
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 1 }}>Unit</div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{unit.name}</div>
                   <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{unit.company}</div>
                 </div>
+                <span style={{ fontSize: 12, color: "var(--hbr-muted)" }}>→</span>
               </div>
             </Link>
           )}
