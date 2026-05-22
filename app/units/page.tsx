@@ -8,10 +8,6 @@ const COMPANY_COLOR: Record<string, string> = {
   "ANGEL BEATS": "#C8A050", "other": "#555555",
 };
 
-const POSITION_LABEL: Record<string, string> = {
-  front: "Front", mid: "Mid", back: "Back",
-};
-
 export const dynamic = "force-dynamic";
 
 export default async function UnitsPage() {
@@ -104,18 +100,6 @@ export default async function UnitsPage() {
                       {unit.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
                     </span>
                   )}
-
-                  {/* Position badge */}
-                  <span style={{
-                    position: "absolute", bottom: 8, left: 8,
-                    fontFamily: "monospace", fontSize: 9, fontWeight: 700,
-                    padding: "2px 6px", borderRadius: 2,
-                    background: "rgba(255,255,255,0.08)",
-                    color: "var(--hbr-muted)",
-                    border: "0.5px solid rgba(255,255,255,0.1)",
-                  }}>
-                    {POSITION_LABEL[unit.position] ?? unit.position}
-                  </span>
 
                   {/* Limited badge */}
                   {unit.is_limited && (
