@@ -1,19 +1,20 @@
 export const dynamic = "force-dynamic";
 
-interface Props { 
-  params: any;
-  searchParams: any;
-}
+type Props = { params: any };
 
-export default async function UnitProfilePage(props: Props) {
+export default async function Page(props: Props) {
   const params = await props.params;
-  const id = params?.id ?? "NO_ID";
+  const id = params?.id ?? "empty";
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "NO_URL";
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "NO_KEY";
 
   return (
     <div style={{ padding: 48, color: "white", fontFamily: "monospace" }}>
-      <a href="/units" style={{ color: "#666", fontSize: 12 }}>← Back</a>
-      <p style={{ marginTop: 24 }}>Raw props: {JSON.stringify(params)}</p>
-      <p>ID extracted: {id}</p>
+      <a href="/units">← Back</a>
+      <p style={{ marginTop: 24 }}>ID: {id}</p>
+      <p>URL: {url}</p>
+      <p>Key starts with: {key.slice(0, 20)}</p>
     </div>
   );
 }
