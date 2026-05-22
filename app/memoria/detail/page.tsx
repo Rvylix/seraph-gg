@@ -40,7 +40,6 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
 
   const m = memoria as any;
 
-  // Fetch unit separately
   const { data: unitData } = m.unit_id ? await supabase
     .from("units").select("id, name, company, image_url").eq("id", m.unit_id).single()
     : { data: null };
@@ -62,56 +61,78 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
   const passives   = allSkills.filter(s => s.skill_type === "passive");
 
   return (
-    <div style={{ background: "var(--hbr-bg)", minHeight: "100vh" }}>
+    <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
-      {/* Back */}
-      <div style={{ padding: "12px 24px", borderBottom: "0.5px solid var(--hbr-border)", background: "var(--hbr-surface)" }}>
-        <Link href={backHref} style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none" }}>
-          ← Back to {unit?.name ?? "Units"}
-        </Link>
-      </div>
+      {/* ── LEFT — Full height Memoria artwork ── */}
+      <div style={{ width: 380, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "calc(100vh - 49px)" }}>
+        {/* Grid overlay */}
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
 
-        {/* LEFT — Artwork + meta */}
-        <div style={{ background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 20px", gap: 16 }}>
+        {/* Bottom gradient */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, #0F0F1A 0%, rgba(15,15,26,0.6) 60%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
 
-          {/* Artwork */}
-          <div style={{ width: 200, height: 200, borderRadius: 12, overflow: "hidden", border: `1px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.4)" : "rgba(120,100,200,0.4)"}`, background: m.rarity === "SS" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            {m.image_url
-              ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              : <span style={{ fontFamily: "monospace", fontSize: 32, fontWeight: 700, color: RARITY_COLOR[m.rarity] ?? "#fff" }}>{m.rarity}</span>
-            }
+        {/* Artwork */}
+        {m.image_url ? (
+          <img src={m.image_url} alt={m.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", zIndex: 0 }} />
+        ) : (
+          <div style={{ position: "absolute", inset: 0, zIndex: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {/* Rarity glow background */}
+            <div style={{ position: "absolute", inset: 0, background: m.rarity === "SS" ? "radial-gradient(ellipse at center, rgba(200,160,80,0.12) 0%, transparent 70%)" : "radial-gradient(ellipse at center, rgba(120,100,200,0.12) 0%, transparent 70%)" }} />
+            <span style={{ fontFamily: "monospace", fontSize: 80, fontWeight: 700, color: m.rarity === "SS" ? "rgba(200,160,80,0.15)" : "rgba(120,100,200,0.15)", position: "relative", zIndex: 1 }}>
+              {m.rarity}
+            </span>
           </div>
+        )}
+
+        {/* Back button — top left */}
+        <div style={{ position: "absolute", top: 16, left: 16, zIndex: 10 }}>
+          <Link href={backHref} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none", background: "rgba(7,7,14,0.75)", padding: "5px 10px", borderRadius: 3, border: "0.5px solid var(--hbr-border)", backdropFilter: "blur(4px)" }}>
+            ← {unit?.name ?? "Back"}
+          </Link>
+        </div>
+
+        {/* Bottom overlay — rarity, tags, unit */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
 
           {/* Rarity icon */}
-          {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ height: 20, objectFit: "contain" }} />}
+          {rarityIcon && (
+            <img src={rarityIcon} alt={m.rarity} style={{ height: 18, objectFit: "contain", marginBottom: 10, display: "block" }} />
+          )}
 
-          {/* Tags */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
-            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>{m.role}</span>
+          {/* Tags row — attack type, element */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>
+              {m.role}
+            </span>
             {m.attack_type !== "none" && (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(0,0,0,0.4)", color: "var(--hbr-muted)", textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
                 {atkIcon && <img src={atkIcon} alt={m.attack_type} style={{ width: 14, height: 14, objectFit: "contain" }} />}
                 {m.attack_type}
               </span>
             )}
             {m.element !== "none" && (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(0,0,0,0.4)", color: elemColor, textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
                 {elemIcon && <img src={elemIcon} alt={m.element} style={{ width: 14, height: 14, objectFit: "contain" }} />}
                 {m.element}
               </span>
             )}
-            {m.is_limited && <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>Limited</span>}
+            {m.is_limited && (
+              <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.15)", color: "#C8A050", backdropFilter: "blur(4px)" }}>
+                Limited
+              </span>
+            )}
           </div>
 
           {/* Unit link */}
           {unit && (
-            <Link href={`/units/profile?id=${from || unit.id}`} style={{ textDecoration: "none", width: "100%" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6 }}>
-                {unit.image_url && <img src={unit.image_url} alt={unit.name} style={{ width: 36, height: 36, borderRadius: 4, objectFit: "cover", objectPosition: "top" }} />}
+            <Link href={`/units/profile?id=${from || unit.id}`} style={{ textDecoration: "none", display: "block" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "rgba(7,7,14,0.7)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, backdropFilter: "blur(8px)" }}>
+                {unit.image_url && (
+                  <img src={unit.image_url} alt={unit.name} style={{ width: 32, height: 32, borderRadius: 4, objectFit: "cover", objectPosition: "top", flexShrink: 0 }} />
+                )}
                 <div>
-                  <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>Unit</div>
+                  <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 1 }}>Unit</div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{unit.name}</div>
                   <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{unit.company}</div>
                 </div>
@@ -119,37 +140,50 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
             </Link>
           )}
         </div>
+      </div>
 
-        {/* RIGHT — Skill details */}
-        <div style={{ padding: "32px 36px", overflowY: "auto" }}>
+      {/* ── RIGHT — Skills content ── */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "32px 36px" }}>
 
-          <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Memoria</p>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 8, lineHeight: 1.2 }}>{m.name}</h1>
-          <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 28, maxWidth: 560 }}>{m.skill_desc}</p>
+        {/* Memoria name */}
+        <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Memoria</p>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 6, lineHeight: 1.15 }}>{m.name}</h1>
+        <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>{m.skill_desc}</p>
 
-          {/* Debug + No skill data yet */}
-          {allSkills.length === 0 && (
-            <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px" }}>
-              <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Detailed skill data not added yet for this Memoria.</p>
-            </div>
-          )}
+        {/* No skill data */}
+        {allSkills.length === 0 && (
+          <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px" }}>
+            <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Detailed skill data not added yet for this Memoria.</p>
+          </div>
+        )}
 
-          {/* MAIN SKILLS */}
-          {mainSkills.map((s: any, i: number) => (
-            <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
-          ))}
+        {/* MAIN SKILLS */}
+        {mainSkills.length > 0 && (
+          <div style={{ marginBottom: 8 }}>
+            {mainSkills.map((s: any, i: number) => (
+              <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
+            ))}
+          </div>
+        )}
 
-          {/* EX SKILLS */}
-          {exSkills.map((s: any, i: number) => (
-            <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
-          ))}
+        {/* EX SKILLS */}
+        {exSkills.length > 0 && (
+          <div style={{ marginBottom: 8 }}>
+            {exSkills.map((s: any, i: number) => (
+              <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
+            ))}
+          </div>
+        )}
 
-          {/* PASSIVES */}
-          {passives.map((s: any, i: number) => (
-            <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
-          ))}
+        {/* PASSIVES */}
+        {passives.length > 0 && (
+          <div style={{ marginBottom: 8 }}>
+            {passives.map((s: any, i: number) => (
+              <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
+            ))}
+          </div>
+        )}
 
-        </div>
       </div>
     </div>
   );
@@ -163,50 +197,55 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
   const isPassive = skill.skill_type === "passive";
 
   return (
-    <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "18px 22px", marginBottom: 10 }}>
+    <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "18px 22px", marginBottom: 10, borderLeft: `2px solid ${typeInfo.color}` }}>
+
+      {/* Type badge + skill name */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: typeInfo.bg, color: typeInfo.color, fontWeight: 600, letterSpacing: "0.05em", flexShrink: 0 }}>
+        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: typeInfo.bg, color: typeInfo.color, fontWeight: 600, letterSpacing: "0.05em", flexShrink: 0, textTransform: "uppercase" }}>
           {typeInfo.label}{total > 1 ? ` ${index + 1}` : ""}
         </span>
         <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{skill.skill_name}</span>
       </div>
 
+      {/* Attack type + element + hits + target */}
       {!isPassive && (skill.attack_type || skill.element || skill.hits || skill.target) && (
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14, alignItems: "center" }}>
           {skill.attack_type && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize", border: "0.5px solid var(--hbr-border)" }}>
               {atkIcon && <img src={atkIcon} alt={skill.attack_type} style={{ width: 13, height: 13, objectFit: "contain" }} />}
               {skill.attack_type}
             </span>
           )}
           {skill.element && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize", border: "0.5px solid var(--hbr-border)" }}>
               {elemIcon && <img src={elemIcon} alt={skill.element} style={{ width: 13, height: 13, objectFit: "contain" }} />}
               {skill.element}
             </span>
           )}
           {skill.hits && (
-            <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
               {skill.hits} hit{skill.hits > 1 ? "s" : ""}
             </span>
           )}
           {skill.target && (
-            <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
               {skill.target}
             </span>
           )}
         </div>
       )}
 
-      <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: skill.notes?.length > 0 ? 12 : 0 }}>
+      {/* Description */}
+      <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: skill.notes?.length > 0 ? 14 : 0 }}>
         {skill.power}
       </p>
 
+      {/* Notes */}
       {skill.notes && skill.notes.length > 0 && (
-        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
           {(skill.notes as string[]).map((note: string, i: number) => (
             <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-              <span style={{ color: "var(--hbr-red)", fontSize: 12, marginTop: 2, flexShrink: 0 }}>*</span>
+              <span style={{ color: typeInfo.color, fontSize: 12, marginTop: 2, flexShrink: 0 }}>*</span>
               <span style={{ fontSize: 12, color: "var(--hbr-silver)", lineHeight: 1.6 }}>{note}</span>
             </div>
           ))}
