@@ -1,7 +1,7 @@
 const BASE = "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/icons";
 
 export const ELEMENT_ICON: Record<string, string> = {
-  fire:    `${BASE}/elements/Fire_Elements.webp`,
+  fire:    `${BASE}/elements/Fire_Element.webp`,
   ice:     `${BASE}/elements/ice.png`,
   thunder: `${BASE}/elements/thunder.png`,
   light:   `${BASE}/elements/light.png`,
