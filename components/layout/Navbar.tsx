@@ -27,7 +27,7 @@ export function Navbar() {
         fontWeight: 700, letterSpacing: "0.15em", color: "#fff",
         textDecoration: "none",
       }}>
-        SERAPH<span style={{ color: "var(--hbr-red)" }}>.</span>GG
+        NARBY<span style={{ color: "var(--hbr-red)" }}>.</span>GG
       </Link>
 
       <ul style={{ display: "flex", gap: 24, listStyle: "none", margin: 0, padding: 0 }}>

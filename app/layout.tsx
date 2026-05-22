@@ -3,7 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 
 export const metadata: Metadata = {
-  title:       "SERAPH.GG — Heaven Burns Red Global Resource",
+  title:       "NARBY.GG — Heaven Burns Red Global Resource",
   description: "Memoria database, event tracker, squad showcase, unit profiles and progression guides for Heaven Burns Red Global.",
   keywords:    ["Heaven Burns Red", "HBR", "Memoria", "guide", "tier list", "squad"],
 };
