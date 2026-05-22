@@ -13,8 +13,8 @@ export default function HomePage() {
           // Heaven Burns Red — Global Resource Hub
         </p>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", lineHeight: 1.15, marginBottom: 6 }}>
-          Fight. Survive.<br />
-          <span style={{ color: "var(--hbr-red)" }}>Never Burn Out.</span>
+          Embrace The<br />
+          <span style={{ color: "var(--hbr-red)" }}>Ultimate Sorrow.</span>
         </h1>
         <p style={{ fontSize: 13, color: "var(--hbr-muted)", marginBottom: 24 }}>
           Memoria database · Event tracker · Squad showcase · Progression guides
