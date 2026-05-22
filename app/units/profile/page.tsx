@@ -110,8 +110,8 @@ export default async function UnitProfilePage(props: any) {
               return (
                 <Link key={m.id} href={`/memoria/detail?id=${m.id}&from=${id}`} style={{ textDecoration: "none" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "72px 1fr", alignItems: "center", gap: 14, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, padding: "12px 14px", cursor: "pointer", transition: "border-color 0.2s" }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(204,34,34,0.5)")}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(180,40,40,0.22)")}>
+                    
+                    >
 
                     {/* Artwork */}
                     <div style={{ width: 72, height: 72, borderRadius: 6, flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", fontSize: 13, fontWeight: 700, background: m.rarity === "SS" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", color: RARITY_COLOR[m.rarity] ?? "#fff", border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.25)" : "rgba(120,100,200,0.25)"}` }}>
