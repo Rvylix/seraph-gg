@@ -14,7 +14,7 @@ export default async function Page(props: Props) {
       <a href="/units">← Back</a>
       <p style={{ marginTop: 24 }}>ID: {id}</p>
       <p>URL: {url}</p>
-      <p>Key starts with: {key.slice(0, 20)}</p>
+      <p>Key: {key.slice(0, 20)}</p>
     </div>
   );
 }
