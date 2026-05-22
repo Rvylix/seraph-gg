@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function MemoriaPage() {
   const { data: memorias, error } = await supabase
     .from("memorias")
-    .select("*, units(id, name, company)")
+    .select("*, units!memorias_unit_id_fkey(id, name, company)")
     .order("rarity_order")
     .order("name");
 
