@@ -1,7 +1,7 @@
 const BASE = "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/icons";
 
 export const ELEMENT_ICON: Record<string, string> = {
-  fire:    `${BASE}/elements/Fire_Element.webp`,
+  fire:    `${BASE}/elements/Fire_Elements.webp`,
   ice:     `${BASE}/elements/ice.png`,
   thunder: `${BASE}/elements/thunder.png`,
   light:   `${BASE}/elements/light.png`,
@@ -14,6 +14,19 @@ export const ATTACK_ICON: Record<string, string> = {
   pierce: `${BASE}/attack/pierce.png`,
   crush:  `${BASE}/attack/crush.png`,
   none:   "",
+};
+
+export const COMPANY_ICON: Record<string, string> = {
+  "31-A":        `${BASE}/company/31A_Logo.webp`,
+  "31-B":        `${BASE}/company/31B_Logo.webp`,
+  "31-C":        `${BASE}/company/31C_Logo.webp`,
+  "31-D":        `${BASE}/company/31D_Logo.webp`,
+  "31-E":        `${BASE}/company/31E_Logo.webp`,
+  "31-F":        `${BASE}/company/31F_Logo.webp`,
+  "31-X":        `${BASE}/company/31F_Logo.webp`,
+  "30-G":        `${BASE}/company/30G_Logo.webp`,
+  "HQ":          `${BASE}/company/HQ.webp`,
+  "ANGEL BEATS": `${BASE}/company/angelbeats.webp`,
 };
 
 export const ELEMENT_COLOR: Record<string, string> = {

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_COLOR } from "@/lib/icons";
+import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_COLOR, COMPANY_ICON } from "@/lib/icons";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -51,14 +51,17 @@ export default async function UnitProfilePage(props: any) {
     return acc;
   }, {} as Record<string, SocRow[]>);
 
+  const companyLogo = COMPANY_ICON[u.company] ?? "";
+
   return (
     <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
-      {/* LEFT — Full height character art */}
+      {/* ── LEFT — Full height character art ── */}
       <div style={{ width: 320, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
         <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "45%", background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
 
+        {/* Character artwork */}
         {u.image_url ? (
           <img src={u.image_url} alt={u.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", zIndex: 0 }} />
         ) : (
@@ -69,38 +72,51 @@ export default async function UnitProfilePage(props: any) {
           </div>
         )}
 
+        {/* Back button */}
         <div style={{ position: "absolute", top: 16, left: 16, zIndex: 10 }}>
           <Link href="/units" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none", background: "rgba(7,7,14,0.7)", padding: "5px 10px", borderRadius: 3, border: "0.5px solid var(--hbr-border)", backdropFilter: "blur(4px)" }}>
             ← All Units
           </Link>
         </div>
 
+        {/* Name overlay — bottom */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
-          <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 4 }}>// {u.company}</p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>{u.name}</h1>
+
+          {/* Company logo + name */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            {companyLogo && (
+              <img src={companyLogo} alt={u.company} style={{ width: 28, height: 28, objectFit: "contain", flexShrink: 0 }} />
+            )}
+            <span style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 700, letterSpacing: "0.15em", color: "#fff", textTransform: "uppercase" }}>
+              {u.company}
+            </span>
+          </div>
+
+          {/* Character name */}
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>
+            {u.name}
+          </h1>
+
+          {/* JP name + CV */}
           {u.name_jp && (
-            <p style={{ fontSize: 11, color: "var(--hbr-muted)", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "var(--hbr-muted)" }}>
               {u.name_jp}{u.cv ? ` · CV: ${u.cv}` : ""}
             </p>
           )}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {[u.company, u.position, u.is_limited ? "Limited" : "Standard"].map((s) => (
-              <span key={s} style={{ fontSize: 9, padding: "3px 8px", borderRadius: 2, background: "rgba(255,255,255,0.07)", border: "0.5px solid rgba(255,255,255,0.12)", color: "var(--hbr-silver)", textTransform: "capitalize", letterSpacing: "0.05em" }}>{s}</span>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* RIGHT — Scrollable content */}
+      {/* ── RIGHT — Scrollable content ── */}
       <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
 
         {u.description && (
           <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.8, marginBottom: 28, maxWidth: 620 }}>{u.description}</p>
         )}
 
+        {/* Quick stats */}
         <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
           {[
-            { label: "Memorias", value: memorias?.length ?? 0 },
+            { label: "Memorias",      value: memorias?.length ?? 0 },
             { label: "Bond Episodes", value: socializations?.length ?? 0 },
             { label: "Recollections", value: recollections?.length ?? 0 },
           ].map((s) => (
