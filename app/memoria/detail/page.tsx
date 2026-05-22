@@ -47,11 +47,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
   const unit = unitData as any;
 
   const { data: skills } = await supabase
-    .from("memoria_skills")
-    .select("*")
-    .eq("memoria_id", id)
-    .order("skill_type")
-    .order("order_index");
+    .from("memoria_skills").select("*").eq("memoria_id", id).order("order_index");
 
   const roleStyle  = ROLE_COLOR[m.role]       ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
   const elemColor  = ELEMENT_COLOR[m.element] ?? "#888";
