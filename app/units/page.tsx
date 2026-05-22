@@ -1,148 +1,244 @@
 import { supabase } from "@/lib/supabase";
+import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_COLOR } from "@/lib/icons";
 import Link from "next/link";
-
-const COMPANY_COLOR: Record<string, string> = {
-  "31-A": "#CC4444", "31-B": "#CC6622", "31-C": "#CC8833",
-  "31-D": "#AAAA22", "31-E": "#44AA66", "31-F": "#4488CC",
-  "31-X": "#9944CC", "30-G": "#CC44AA", "HQ": "#888888",
-  "ANGEL BEATS": "#C8A050", "other": "#555555",
-};
-
-const POSITION_LABEL: Record<string, string> = {
-  front: "Front", mid: "Mid", back: "Back",
-};
 
 export const dynamic = "force-dynamic";
 
-export default async function UnitsPage() {
-  const { data: units, error } = await supabase
-    .from("units")
-    .select("*")
-    .order("company")
-    .order("name");
+interface Props { params: Promise<{ id: string }> }
 
-  const companies = [...new Set(((units || []) as any[]).map((u: any) => u.company))];
+export default async function UnitProfilePage({ params }: Props) {
+  const { id } = await params;
+
+  const { data: unit } = await supabase
+    .from("units").select("*").eq("id", id).single();
+
+  if (!unit) {
+    return (
+      <div style={{ padding: 48, color: "var(--hbr-red)", fontFamily: "monospace" }}>
+        <p>Unit not found for ID: {id}</p>
+        <a href="/units" style={{ color: "var(--hbr-muted)", fontSize: 12 }}>← Back to units</a>
+      </div>
+    );
+  }
+
+  const u = unit as {
+    id: string; name: string; name_jp: string | null; cv: string | null;
+    company: string; position: string; description: string | null;
+    image_url: string | null; is_limited: boolean;
+  };
+
+  const { data: memorias } = await supabase
+    .from("memorias").select("*").eq("unit_id", id).order("rarity").order("name");
+
+  const { data: socializations } = await supabase
+    .from("socializations").select("*").eq("unit_id", id).order("order_index");
+
+  const { data: recollections } = await supabase
+    .from("recollections").select("*").eq("unit_id", id).order("order_index");
+
+  type SocRow = { id: string; unit_id: string; episode_group: string; order_index: number; title: string; unlock_condition: string };
+  const socialGroups = (socializations as SocRow[] ?? []).reduce((acc: Record<string, SocRow[]>, s: SocRow) => {
+    if (!acc[s.episode_group]) acc[s.episode_group] = [];
+    acc[s.episode_group].push(s);
+    return acc;
+  }, {} as Record<string, SocRow[]>);
 
   return (
-    <div style={{ background: "var(--hbr-bg)", minHeight: "100vh" }}>
+    <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
-      {/* Page header */}
-      <div style={{
-        padding: "22px 24px 0",
-        background: "var(--hbr-surface)",
-        borderBottom: "0.5px solid var(--hbr-border)",
-      }}>
-        <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 6 }}>
-          // Roster
-        </p>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Units</h1>
-        <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 16 }}>
-          {units?.length ?? 0} characters · Click any unit to view full profile, Memorias, Socialization & Recollections
-        </p>
+      {/* ── LEFT — Full height character art ── */}
+      <div style={{ width: 320, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "45%", background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
 
-        {/* Company filter tabs */}
-        <div style={{ display: "flex", gap: 0, borderTop: "0.5px solid var(--hbr-border)", overflowX: "auto" }}>
-          {["All", ...companies].map((c) => (
-            <div key={c} style={{
-              fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
-              padding: "10px 16px", color: "var(--hbr-muted)", cursor: "pointer",
-              whiteSpace: "nowrap", borderBottom: "2px solid transparent",
-            }}>
-              {c}
-            </div>
-          ))}
+        {u.image_url ? (
+          <img src={u.image_url} alt={u.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", zIndex: 0 }} />
+        ) : (
+          <div style={{ position: "absolute", inset: 0, zIndex: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontFamily: "monospace", fontSize: 64, fontWeight: 700, color: "rgba(255,255,255,0.04)" }}>
+              {u.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
+            </span>
+          </div>
+        )}
+
+        {/* Back button */}
+        <div style={{ position: "absolute", top: 16, left: 16, zIndex: 10 }}>
+          <Link href="/units" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none", background: "rgba(7,7,14,0.7)", padding: "5px 10px", borderRadius: 3, border: "0.5px solid var(--hbr-border)", backdropFilter: "blur(4px)" }}>
+            ← All Units
+          </Link>
+        </div>
+
+        {/* Name overlay */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
+          <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 4 }}>
+            // {u.company}
+          </p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>{u.name}</h1>
+          {u.name_jp && (
+            <p style={{ fontSize: 11, color: "var(--hbr-muted)", marginBottom: 10 }}>
+              {u.name_jp}{u.cv ? ` · CV: ${u.cv}` : ""}
+            </p>
+          )}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {[u.company, u.position, u.is_limited ? "Limited" : "Standard"].map((s) => (
+              <span key={s} style={{ fontSize: 9, padding: "3px 8px", borderRadius: 2, background: "rgba(255,255,255,0.07)", border: "0.5px solid rgba(255,255,255,0.12)", color: "var(--hbr-silver)", textTransform: "capitalize", letterSpacing: "0.05em" }}>
+                {s}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Error state */}
-      {error && (
-        <div style={{ padding: 24, color: "var(--hbr-red)", fontFamily: "monospace", fontSize: 12 }}>
-          Error loading units: {error.message}
-        </div>
-      )}
+      {/* ── RIGHT — Scrollable content ── */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
 
-      {/* Empty state */}
-      {!error && (!units || units.length === 0) && (
-        <div style={{ padding: 48, textAlign: "center", color: "var(--hbr-muted)", fontSize: 13 }}>
-          No units found. Add some in Supabase to get started.
-        </div>
-      )}
+        {u.description && (
+          <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.8, marginBottom: 28, maxWidth: 620 }}>
+            {u.description}
+          </p>
+        )}
 
-      {/* Unit grid */}
-      {units && units.length > 0 && (
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-          gap: 10, padding: 20,
-        }}>
-          {((units || []) as any[]).map((unit: any) => (
-            <Link key={unit.id} href={`/units/${unit.id}`} style={{ textDecoration: "none" }}>
-              <div style={{
-                background: "var(--hbr-card)",
-                border: "0.5px solid var(--hbr-border)",
-                borderTop: `2px solid ${COMPANY_COLOR[unit.company] ?? "#555"}`,
-                borderRadius: 6,
-                overflow: "hidden",
-                cursor: "pointer",
-                transition: "border-color 0.2s",
-              }}>
-                {/* Avatar placeholder */}
-                <div style={{
-                  width: "100%", aspectRatio: "3/4",
-                  background: "var(--hbr-surface)",
-                  display: "flex", alignItems: "flex-start", justifyContent: "center",
-                  position: "relative",
-                }}>
-                  {unit.image_url ? (
-                    <img src={unit.image_url} alt={unit.name}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
-                  ) : (
-                    <span style={{
-                      fontFamily: "monospace", fontSize: 32, fontWeight: 700,
-                      color: "rgba(255,255,255,0.06)",
-                    }}>
-                      {unit.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
-                    </span>
-                  )}
-
-                  {/* Position badge */}
-                  <span style={{
-                    position: "absolute", bottom: 8, left: 8,
-                    fontFamily: "monospace", fontSize: 9, fontWeight: 700,
-                    padding: "2px 6px", borderRadius: 2,
-                    background: "rgba(255,255,255,0.08)",
-                    color: "var(--hbr-muted)",
-                    border: "0.5px solid rgba(255,255,255,0.1)",
-                  }}>
-                    {POSITION_LABEL[unit.position] ?? unit.position}
-                  </span>
-
-                  {/* Limited badge */}
-                  {unit.is_limited && (
-                    <span style={{
-                      position: "absolute", top: 8, right: 8,
-                      fontSize: 9, padding: "2px 5px", borderRadius: 2,
-                      background: "rgba(200,160,80,0.2)",
-                      color: "var(--hbr-gold)",
-                      border: "0.5px solid rgba(200,160,80,0.3)",
-                    }}>LIMITED</span>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div style={{ padding: "10px 12px 12px" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 2 }}>
-                    {unit.name}
-                  </div>
-                  <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>
-                    {unit.company}
-                  </div>
-                </div>
-              </div>
-            </Link>
+        {/* Quick stats */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
+          {[
+            { label: "Memorias",       value: memorias?.length ?? 0 },
+            { label: "Bond Episodes",  value: socializations?.length ?? 0 },
+            { label: "Recollections",  value: recollections?.length ?? 0 },
+          ].map((s) => (
+            <div key={s.label} style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4, padding: "8px 16px", textAlign: "center" }}>
+              <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 700, color: "#fff" }}>{s.value}</div>
+              <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
+            </div>
           ))}
         </div>
-      )}
+
+        {/* ── MEMORIAS ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Memorias
+        </span>
+
+        {!memorias || memorias.length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 28 }}>No Memorias added yet.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+            {(memorias as any[]).map((m: any) => {
+              const roleStyle = ROLE_COLOR[m.role] ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
+              const elemColor = ELEMENT_COLOR[m.element] ?? "#888";
+              const elemIcon  = ELEMENT_ICON[m.element];
+              const atkIcon   = ATTACK_ICON[m.attack_type];
+
+              return (
+                <div key={m.id} style={{ display: "grid", gridTemplateColumns: "64px 1fr", alignItems: "center", gap: 14, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, padding: "12px 14px" }}>
+
+                  {/* Memoria artwork / rarity box */}
+                  <div style={{ width: 64, height: 64, borderRadius: 6, flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", fontSize: 13, fontWeight: 700, background: m.rarity === "SS" ? "rgba(200,160,80,0.12)" : "rgba(120,100,200,0.12)", color: RARITY_COLOR[m.rarity] ?? "#fff", border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.3)" : "rgba(120,100,200,0.3)"}` }}>
+                    {m.image_url
+                      ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : m.rarity
+                    }
+                  </div>
+
+                  {/* Info */}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 3 }}>{m.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--hbr-muted)", lineHeight: 1.5, marginBottom: 7 }}>{m.skill_desc}</div>
+
+                    {/* Tags row */}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+
+                      {/* Role */}
+                      <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>
+                        {m.role}
+                      </span>
+
+                      {/* Attack type with icon */}
+                      {m.attack_type !== "none" && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+                          {atkIcon
+                            ? <img src={atkIcon} alt={m.attack_type} style={{ width: 12, height: 12, objectFit: "contain" }} />
+                            : null
+                          }
+                          {m.attack_type}
+                        </span>
+                      )}
+
+                      {/* Element with icon */}
+                      {m.element !== "none" && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize" }}>
+                          {elemIcon
+                            ? <img src={elemIcon} alt={m.element} style={{ width: 12, height: 12, objectFit: "contain" }} />
+                            : null
+                          }
+                          {m.element}
+                        </span>
+                      )}
+
+                      {/* Limited */}
+                      {m.is_limited && (
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>
+                          Limited
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 24px" }} />
+
+        {/* ── SOCIALIZATION ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Socialization
+        </span>
+        {Object.keys(socialGroups).length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 28 }}>Socialization not available for this unit.</p>
+        ) : (
+          <div style={{ marginBottom: 28 }}>
+            {Object.entries(socialGroups).map(([group, items]) => (
+              <div key={group} style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "var(--hbr-silver)", marginBottom: 8, paddingBottom: 6, borderBottom: "0.5px solid var(--hbr-border)" }}>{group}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {(items as any[]).map((s: any) => (
+                    <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
+                      <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 24 }}>S{s.order_index}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{s.title}</div>
+                        <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{s.unlock_condition}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 24px" }} />
+
+        {/* ── RECOLLECTIONS ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Recollections
+        </span>
+        {!recollections || recollections.length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", paddingBottom: 40 }}>Recollections not available for this unit.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingBottom: 40 }}>
+            {(recollections as any[]).map((r: any) => (
+              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 24 }}>R{r.order_index}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{r.title}</div>
+                  <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{r.unlock_condition}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
