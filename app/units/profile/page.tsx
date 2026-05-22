@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_COLOR, COMPANY_ICON } from "@/lib/icons";
+import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_COLOR, RARITY_ICON, COMPANY_ICON } from "@/lib/icons";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -61,7 +61,6 @@ export default async function UnitProfilePage(props: any) {
         <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "45%", background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
 
-        {/* Character artwork */}
         {u.image_url ? (
           <img src={u.image_url} alt={u.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", zIndex: 0 }} />
         ) : (
@@ -72,17 +71,13 @@ export default async function UnitProfilePage(props: any) {
           </div>
         )}
 
-        {/* Back button */}
         <div style={{ position: "absolute", top: 16, left: 16, zIndex: 10 }}>
           <Link href="/units" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none", background: "rgba(7,7,14,0.7)", padding: "5px 10px", borderRadius: 3, border: "0.5px solid var(--hbr-border)", backdropFilter: "blur(4px)" }}>
             ← All Units
           </Link>
         </div>
 
-        {/* Name overlay — bottom */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
-
-          {/* Company logo + name */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             {companyLogo && (
               <img src={companyLogo} alt={u.company} style={{ width: 28, height: 28, objectFit: "contain", flexShrink: 0 }} />
@@ -91,13 +86,7 @@ export default async function UnitProfilePage(props: any) {
               {u.company}
             </span>
           </div>
-
-          {/* Character name */}
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>
-            {u.name}
-          </h1>
-
-          {/* JP name + CV */}
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>{u.name}</h1>
           {u.name_jp && (
             <p style={{ fontSize: 11, color: "var(--hbr-muted)" }}>
               {u.name_jp}{u.cv ? ` · CV: ${u.cv}` : ""}
@@ -138,14 +127,35 @@ export default async function UnitProfilePage(props: any) {
               const elemColor = ELEMENT_COLOR[m.element] ?? "#888";
               const elemIcon = ELEMENT_ICON[m.element];
               const atkIcon = ATTACK_ICON[m.attack_type];
+              const rarityIcon = RARITY_ICON[m.rarity];
               return (
-                <div key={m.id} style={{ display: "grid", gridTemplateColumns: "64px 1fr", alignItems: "center", gap: 14, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, padding: "12px 14px" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: 6, flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", fontSize: 13, fontWeight: 700, background: m.rarity === "SS" ? "rgba(200,160,80,0.12)" : "rgba(120,100,200,0.12)", color: RARITY_COLOR[m.rarity] ?? "#fff", border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.3)" : "rgba(120,100,200,0.3)"}` }}>
-                    {m.image_url ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : m.rarity}
+                <div key={m.id} style={{ display: "grid", gridTemplateColumns: "72px 1fr", alignItems: "center", gap: 14, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, padding: "12px 14px" }}>
+
+                  {/* Memoria artwork */}
+                  <div style={{ width: 72, height: 72, borderRadius: 6, flexShrink: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: m.rarity === "SS" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.25)" : "rgba(120,100,200,0.25)"}`, position: "relative" }}>
+                    {m.image_url
+                      ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <span style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: RARITY_COLOR[m.rarity] ?? "#fff" }}>{m.rarity}</span>
+                    }
                   </div>
+
+                  {/* Info */}
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 3 }}>{m.name}</div>
+                    {/* Name + rarity icon */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                      {rarityIcon && (
+                        <img src={rarityIcon} alt={m.rarity} style={{ height: 16, objectFit: "contain", flexShrink: 0 }} />
+                      )}
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{m.name}</span>
+                      {m.is_limited && (
+                        <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050", flexShrink: 0 }}>Limited</span>
+                      )}
+                    </div>
+
+                    {/* Skill description */}
                     <div style={{ fontSize: 11, color: "var(--hbr-muted)", lineHeight: 1.5, marginBottom: 7 }}>{m.skill_desc}</div>
+
+                    {/* Tags */}
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                       <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>{m.role}</span>
                       {m.attack_type !== "none" && (
@@ -160,7 +170,6 @@ export default async function UnitProfilePage(props: any) {
                           {m.element}
                         </span>
                       )}
-                      {m.is_limited && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>Limited</span>}
                     </div>
                   </div>
                 </div>

@@ -1,18 +1,18 @@
 const BASE = "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/icons";
 
 export const ELEMENT_ICON: Record<string, string> = {
-  fire:    `${BASE}/elements/Fire_Element.webp`,
-  ice:     `${BASE}/elements/Ice_Icon.webp`,
-  thunder: `${BASE}/elements/Thunder_Icon.webp`,
-  light:   `${BASE}/elements/Light_Icon.webp`,
-  dark:    `${BASE}/elements/Dark_Element.webp`,
+  fire:    `${BASE}/elements/Fire_Elements.webp`,
+  ice:     `${BASE}/elements/ice.png`,
+  thunder: `${BASE}/elements/thunder.png`,
+  light:   `${BASE}/elements/light.png`,
+  dark:    `${BASE}/elements/dark.png`,
   none:    "",
 };
 
 export const ATTACK_ICON: Record<string, string> = {
   slash:  `${BASE}/attack/Slash.webp`,
-  pierce: `${BASE}/attack/Pierce.webp`,
-  crush:  `${BASE}/attack/Crush.webp`,
+  pierce: `${BASE}/attack/pierce.png`,
+  crush:  `${BASE}/attack/crush.png`,
   none:   "",
 };
 
@@ -27,6 +27,13 @@ export const COMPANY_ICON: Record<string, string> = {
   "30-G":        `${BASE}/company/30G_Logo.webp`,
   "HQ":          `${BASE}/company/HQ.webp`,
   "ANGEL BEATS": `${BASE}/company/angelbeats.webp`,
+};
+
+export const RARITY_ICON: Record<string, string> = {
+  SS:  `${BASE}/rarity/IconRaritySS.webp`,
+  S:   `${BASE}/rarity/IconRarityS.webp`,
+  A:   `${BASE}/rarity/IconRarityA.webp`,
+  SSR: `${BASE}/rarity/IconRaritySSR.webp`,
 };
 
 export const ELEMENT_COLOR: Record<string, string> = {
