@@ -95,7 +95,7 @@ export default async function UnitsPage() {
                 }}>
                   {unit.image_url ? (
                     <img src={unit.image_url} alt={unit.name}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
                   ) : (
                     <span style={{
                       fontFamily: "monospace", fontSize: 32, fontWeight: 700,
