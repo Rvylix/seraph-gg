@@ -31,7 +31,7 @@ export default async function UnitProfilePage(props: any) {
 
   const u = unit as any;
   const { data: memorias } = await supabase
-    .from("memorias").select("*").eq("unit_id", id).order("rarity").order("name");
+    .from("memorias").select("*").eq("unit_id", id).order("name");
   const { data: socializations } = await supabase
     .from("socializations").select("*").eq("unit_id", id).order("order_index");
   const { data: recollections } = await supabase
