@@ -1,0 +1,237 @@
+import { supabase } from "@/lib/supabase";
+import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_ICON, RARITY_COLOR, COMPANY_ICON } from "@/lib/icons";
+import Link from "next/link";
+
+export const dynamic = "force-dynamic";
+
+const SKILL_TYPE_LABEL: Record<string, { label: string; color: string; bg: string }> = {
+  skill:    { label: "Skill",    color: "#FF8080", bg: "rgba(204,34,34,0.15)" },
+  ex_skill: { label: "EX Skill", color: "#FFD966", bg: "rgba(200,160,34,0.15)" },
+  passive:  { label: "Passive",  color: "#80FFAA", bg: "rgba(34,180,100,0.15)" },
+};
+
+export default async function MemoriaDetailPage(props: any) {
+  const searchParams = await props.searchParams;
+  const id   = searchParams?.id   ?? "";
+  const from = searchParams?.from ?? "";
+
+  if (!id) {
+    return (
+      <div style={{ padding: 48, color: "var(--hbr-red)", fontFamily: "monospace" }}>
+        <p>No Memoria ID provided.</p>
+        <a href="/units" style={{ color: "var(--hbr-muted)", fontSize: 12 }}>← Back to units</a>
+      </div>
+    );
+  }
+
+  const { data: memoria } = await supabase
+    .from("memorias")
+    .select("*, units(id, name, company, image_url)")
+    .eq("id", id)
+    .single();
+
+  if (!memoria) {
+    return (
+      <div style={{ padding: 48, color: "var(--hbr-red)", fontFamily: "monospace" }}>
+        <p>Memoria not found.</p>
+        <a href="/units" style={{ color: "var(--hbr-muted)", fontSize: 12 }}>← Back</a>
+      </div>
+    );
+  }
+
+  // Fetch all skills for this memoria
+  const { data: skills } = await supabase
+    .from("memoria_skills")
+    .select("*")
+    .eq("memoria_id", id)
+    .order("skill_type")
+    .order("order_index");
+
+  const m    = memoria as any;
+  const unit = m.units as any;
+
+  const roleStyle  = ROLE_COLOR[m.role]    ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
+  const elemColor  = ELEMENT_COLOR[m.element] ?? "#888";
+  const elemIcon   = ELEMENT_ICON[m.element];
+  const atkIcon    = ATTACK_ICON[m.attack_type];
+  const rarityIcon = RARITY_ICON[m.rarity];
+  const backHref   = from ? `/units/profile?id=${from}` : "/units";
+
+  // Group skills by type
+  const allSkills    = (skills ?? []) as any[];
+  const mainSkills   = allSkills.filter(s => s.skill_type === "skill");
+  const exSkills     = allSkills.filter(s => s.skill_type === "ex_skill");
+  const passives     = allSkills.filter(s => s.skill_type === "passive");
+  const hasSkillData = allSkills.length > 0;
+
+  return (
+    <div style={{ background: "var(--hbr-bg)", minHeight: "100vh" }}>
+
+      {/* Back */}
+      <div style={{ padding: "12px 24px", borderBottom: "0.5px solid var(--hbr-border)", background: "var(--hbr-surface)" }}>
+        <Link href={backHref} style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none" }}>
+          ← Back to {unit?.name ?? "Units"}
+        </Link>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "calc(100vh - 49px)" }}>
+
+        {/* LEFT — Artwork + meta */}
+        <div style={{ background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 20px", gap: 16 }}>
+
+          {/* Artwork */}
+          <div style={{ width: 200, height: 200, borderRadius: 12, overflow: "hidden", border: `1px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.4)" : "rgba(120,100,200,0.4)"}`, background: m.rarity === "SS" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            {m.image_url
+              ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              : <span style={{ fontFamily: "monospace", fontSize: 32, fontWeight: 700, color: RARITY_COLOR[m.rarity] ?? "#fff" }}>{m.rarity}</span>
+            }
+          </div>
+
+          {/* Rarity icon */}
+          {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ height: 20, objectFit: "contain" }} />}
+
+          {/* Tags */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>{m.role}</span>
+            {m.attack_type !== "none" && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+                {atkIcon && <img src={atkIcon} alt={m.attack_type} style={{ width: 14, height: 14, objectFit: "contain" }} />}
+                {m.attack_type}
+              </span>
+            )}
+            {m.element !== "none" && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize" }}>
+                {elemIcon && <img src={elemIcon} alt={m.element} style={{ width: 14, height: 14, objectFit: "contain" }} />}
+                {m.element}
+              </span>
+            )}
+            {m.is_limited && <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>Limited</span>}
+          </div>
+
+          {/* Unit link */}
+          {unit && (
+            <Link href={`/units/profile?id=${from || unit.id}`} style={{ textDecoration: "none", width: "100%" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6 }}>
+                {unit.image_url && <img src={unit.image_url} alt={unit.name} style={{ width: 36, height: 36, borderRadius: 4, objectFit: "cover", objectPosition: "top" }} />}
+                <div>
+                  <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>Unit</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{unit.name}</div>
+                  <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{unit.company}</div>
+                </div>
+              </div>
+            </Link>
+          )}
+        </div>
+
+        {/* RIGHT — Skill details */}
+        <div style={{ padding: "32px 36px", overflowY: "auto" }}>
+
+          <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Memoria</p>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 8, lineHeight: 1.2 }}>{m.name}</h1>
+          <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 28, maxWidth: 560 }}>{m.skill_desc}</p>
+
+          {/* No skill data yet */}
+          {!hasSkillData && (
+            <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px" }}>
+              <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Detailed skill data not added yet for this Memoria.</p>
+            </div>
+          )}
+
+          {/* MAIN SKILLS */}
+          {mainSkills.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              {mainSkills.map((s: any, i: number) => (
+                <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
+              ))}
+            </div>
+          )}
+
+          {/* EX SKILLS */}
+          {exSkills.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              {exSkills.map((s: any, i: number) => (
+                <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
+              ))}
+            </div>
+          )}
+
+          {/* PASSIVES */}
+          {passives.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              {passives.map((s: any, i: number) => (
+                <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
+              ))}
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SkillCard({ skill, index, total }: { skill: any; index: number; total: number }) {
+  const typeInfo  = SKILL_TYPE_LABEL[skill.skill_type] ?? { label: skill.skill_type, color: "#888", bg: "rgba(255,255,255,0.05)" };
+  const elemColor = ELEMENT_COLOR[skill.element] ?? "#888";
+  const elemIcon  = skill.element ? ELEMENT_ICON[skill.element] : null;
+  const atkIcon   = skill.attack_type ? ATTACK_ICON[skill.attack_type] : null;
+  const isPassive = skill.skill_type === "passive";
+
+  return (
+    <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "18px 22px", marginBottom: 10 }}>
+
+      {/* Skill type badge + name */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: typeInfo.bg, color: typeInfo.color, fontWeight: 600, letterSpacing: "0.05em", flexShrink: 0 }}>
+          {typeInfo.label}{total > 1 ? ` ${index + 1}` : ""}
+        </span>
+        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{skill.skill_name}</span>
+      </div>
+
+      {/* Attack type + element + hits + target (for non-passives) */}
+      {!isPassive && (skill.attack_type || skill.element || skill.hits || skill.target) && (
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
+          {skill.attack_type && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+              {atkIcon && <img src={atkIcon} alt={skill.attack_type} style={{ width: 13, height: 13, objectFit: "contain" }} />}
+              {skill.attack_type}
+            </span>
+          )}
+          {skill.element && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize" }}>
+              {elemIcon && <img src={elemIcon} alt={skill.element} style={{ width: 13, height: 13, objectFit: "contain" }} />}
+              {skill.element}
+            </span>
+          )}
+          {skill.hits && (
+            <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+              {skill.hits} hit{skill.hits > 1 ? "s" : ""}
+            </span>
+          )}
+          {skill.target && (
+            <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+              {skill.target}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Power / description */}
+      <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: skill.notes?.length > 0 ? 12 : 0 }}>
+        {skill.power}
+      </p>
+
+      {/* Notes / extra effects */}
+      {skill.notes && skill.notes.length > 0 && (
+        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+          {(skill.notes as string[]).map((note: string, i: number) => (
+            <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <span style={{ color: "var(--hbr-red)", fontSize: 12, marginTop: 2, flexShrink: 0 }}>*</span>
+              <span style={{ fontSize: 12, color: "var(--hbr-silver)", lineHeight: 1.6 }}>{note}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
