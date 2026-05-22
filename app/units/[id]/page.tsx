@@ -43,7 +43,14 @@ export default async function UnitProfilePage({ params }: Props) {
     .eq("id", params.id)
     .single();
 
-  if (!unit) notFound();
+  if (!unit) {
+    return (
+      <div style={{ padding: 48, color: "var(--hbr-red)", fontFamily: "monospace" }}>
+        <p>Unit not found for ID: {params.id}</p>
+        <a href="/units" style={{ color: "var(--hbr-muted)", fontSize: 12 }}>← Back to units</a>
+      </div>
+    );
+  }
   const u = unit as { id: string; name: string; name_jp: string | null; cv: string | null; company: string; position: string; description: string | null; image_url: string | null; is_limited: boolean };
 
   // Fetch memorias for this unit
