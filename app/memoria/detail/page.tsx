@@ -27,10 +27,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
   }
 
   const { data: memoria } = await supabase
-    .from("memorias")
-    .select("*, units(id, name, company, image_url)")
-    .eq("id", id)
-    .single();
+    .from("memorias").select("*").eq("id", id).single();
 
   if (!memoria) {
     return (
@@ -41,15 +38,20 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
     );
   }
 
+  const m = memoria as any;
+
+  // Fetch unit separately
+  const { data: unitData } = m.unit_id ? await supabase
+    .from("units").select("id, name, company, image_url").eq("id", m.unit_id).single()
+    : { data: null };
+  const unit = unitData as any;
+
   const { data: skills } = await supabase
     .from("memoria_skills")
     .select("*")
     .eq("memoria_id", id)
     .order("skill_type")
     .order("order_index");
-
-  const m    = memoria as any;
-  const unit = m.units as any;
 
   const roleStyle  = ROLE_COLOR[m.role]       ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
   const elemColor  = ELEMENT_COLOR[m.element] ?? "#888";
