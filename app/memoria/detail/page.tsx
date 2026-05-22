@@ -10,10 +10,12 @@ const SKILL_TYPE_LABEL: Record<string, { label: string; color: string; bg: strin
   passive:  { label: "Passive",  color: "#80FFAA", bg: "rgba(34,180,100,0.15)" },
 };
 
-export default async function MemoriaDetailPage(props: any) {
-  const searchParams = await props.searchParams;
-  const id   = searchParams?.id   ?? "";
-  const from = searchParams?.from ?? "";
+type Props = {
+  searchParams: Promise<{ id?: string; from?: string }>;
+};
+
+export default async function MemoriaDetailPage({ searchParams }: Props) {
+  const { id = "", from = "" } = await searchParams;
 
   if (!id) {
     return (
@@ -33,13 +35,12 @@ export default async function MemoriaDetailPage(props: any) {
   if (!memoria) {
     return (
       <div style={{ padding: 48, color: "var(--hbr-red)", fontFamily: "monospace" }}>
-        <p>Memoria not found.</p>
+        <p>Memoria not found for ID: {id}</p>
         <a href="/units" style={{ color: "var(--hbr-muted)", fontSize: 12 }}>← Back</a>
       </div>
     );
   }
 
-  // Fetch all skills for this memoria
   const { data: skills } = await supabase
     .from("memoria_skills")
     .select("*")
@@ -50,19 +51,17 @@ export default async function MemoriaDetailPage(props: any) {
   const m    = memoria as any;
   const unit = m.units as any;
 
-  const roleStyle  = ROLE_COLOR[m.role]    ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
+  const roleStyle  = ROLE_COLOR[m.role]       ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
   const elemColor  = ELEMENT_COLOR[m.element] ?? "#888";
   const elemIcon   = ELEMENT_ICON[m.element];
   const atkIcon    = ATTACK_ICON[m.attack_type];
   const rarityIcon = RARITY_ICON[m.rarity];
   const backHref   = from ? `/units/profile?id=${from}` : "/units";
 
-  // Group skills by type
-  const allSkills    = (skills ?? []) as any[];
-  const mainSkills   = allSkills.filter(s => s.skill_type === "skill");
-  const exSkills     = allSkills.filter(s => s.skill_type === "ex_skill");
-  const passives     = allSkills.filter(s => s.skill_type === "passive");
-  const hasSkillData = allSkills.length > 0;
+  const allSkills  = (skills ?? []) as any[];
+  const mainSkills = allSkills.filter(s => s.skill_type === "skill");
+  const exSkills   = allSkills.filter(s => s.skill_type === "ex_skill");
+  const passives   = allSkills.filter(s => s.skill_type === "passive");
 
   return (
     <div style={{ background: "var(--hbr-bg)", minHeight: "100vh" }}>
@@ -131,38 +130,26 @@ export default async function MemoriaDetailPage(props: any) {
           <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 28, maxWidth: 560 }}>{m.skill_desc}</p>
 
           {/* No skill data yet */}
-          {!hasSkillData && (
+          {allSkills.length === 0 && (
             <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px" }}>
               <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Detailed skill data not added yet for this Memoria.</p>
             </div>
           )}
 
           {/* MAIN SKILLS */}
-          {mainSkills.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              {mainSkills.map((s: any, i: number) => (
-                <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
-              ))}
-            </div>
-          )}
+          {mainSkills.map((s: any, i: number) => (
+            <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
+          ))}
 
           {/* EX SKILLS */}
-          {exSkills.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              {exSkills.map((s: any, i: number) => (
-                <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
-              ))}
-            </div>
-          )}
+          {exSkills.map((s: any, i: number) => (
+            <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
+          ))}
 
           {/* PASSIVES */}
-          {passives.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              {passives.map((s: any, i: number) => (
-                <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
-              ))}
-            </div>
-          )}
+          {passives.map((s: any, i: number) => (
+            <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
+          ))}
 
         </div>
       </div>
@@ -179,8 +166,6 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
 
   return (
     <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "18px 22px", marginBottom: 10 }}>
-
-      {/* Skill type badge + name */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: typeInfo.bg, color: typeInfo.color, fontWeight: 600, letterSpacing: "0.05em", flexShrink: 0 }}>
           {typeInfo.label}{total > 1 ? ` ${index + 1}` : ""}
@@ -188,7 +173,6 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
         <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{skill.skill_name}</span>
       </div>
 
-      {/* Attack type + element + hits + target (for non-passives) */}
       {!isPassive && (skill.attack_type || skill.element || skill.hits || skill.target) && (
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
           {skill.attack_type && (
@@ -216,12 +200,10 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
         </div>
       )}
 
-      {/* Power / description */}
       <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: skill.notes?.length > 0 ? 12 : 0 }}>
         {skill.power}
       </p>
 
-      {/* Notes / extra effects */}
       {skill.notes && skill.notes.length > 0 && (
         <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
           {(skill.notes as string[]).map((note: string, i: number) => (
