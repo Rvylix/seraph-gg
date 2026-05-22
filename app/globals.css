@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+:root {
+  --hbr-bg:       #07070E;
+  --hbr-surface:  #0F0F1A;
+  --hbr-card:     #12121F;
+  --hbr-border:   rgba(180,40,40,0.22);
+  --hbr-border-n: rgba(200,200,216,0.08);
+  --hbr-red:      #CC2222;
+  --hbr-red-glow: rgba(204,34,34,0.10);
+  --hbr-silver:   #C8C8D8;
+  --hbr-muted:    #6A6A80;
+  --hbr-gold:     #C8A050;
+  --hbr-green:    #22CC66;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background-color: var(--hbr-bg);
+  color: var(--hbr-silver);
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--hbr-bg); }
+::-webkit-scrollbar-thumb { background: var(--hbr-border); border-radius: 2px; }
+
+/* Reusable component classes (plain CSS — Tailwind v4 compatible) */
+.hbr-card {
+  background: var(--hbr-card);
+  border: 0.5px solid var(--hbr-border);
+  border-radius: 6px;
+}
+
+.hbr-surface {
+  background: var(--hbr-surface);
+  border: 0.5px solid var(--hbr-border);
+}
+
+.hbr-label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--hbr-red);
+  text-transform: uppercase;
+}
+
+.hbr-tag {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.hbr-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  background: var(--hbr-red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.hbr-btn-primary:hover { background: #aa1a1a; }
+
+.hbr-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--hbr-silver);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: 3px;
+  border: 0.5px solid var(--hbr-border-n);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.hbr-btn-outline:hover {
+  border-color: var(--hbr-border);
+  background: rgba(255,255,255,0.04);
+}
+
+.hbr-filter-btn {
+  font-size: 10px;
+  padding: 4px 12px;
+  border-radius: 2px;
+  border: 0.5px solid var(--hbr-border-n);
+  background: transparent;
+  color: var(--hbr-muted);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: color 0.2s, border-color 0.2s;
+}
+.hbr-filter-btn:hover {
+  color: var(--hbr-silver);
+  border-color: var(--hbr-border);
+}
+.hbr-filter-btn.active {
+  border-color: var(--hbr-red);
+  color: var(--hbr-red);
+  background: var(--hbr-red-glow);
+}
+
+/* HBR grid background */
+.bg-hbr-grid {
+  background-image:
+    linear-gradient(rgba(204,34,34,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(204,34,34,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
