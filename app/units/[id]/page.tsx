@@ -34,10 +34,7 @@ export default async function UnitProfilePage({ params }: Props) {
   const { id } = await params;
 
   const { data: unit } = await supabase
-    .from("units")
-    .select("*")
-    .eq("id", id)
-    .single();
+    .from("units").select("*").eq("id", id).single();
 
   if (!unit) {
     return (
@@ -55,23 +52,13 @@ export default async function UnitProfilePage({ params }: Props) {
   };
 
   const { data: memorias } = await supabase
-    .from("memorias")
-    .select("*")
-    .eq("unit_id", id)
-    .order("rarity")
-    .order("name");
+    .from("memorias").select("*").eq("unit_id", id).order("rarity").order("name");
 
   const { data: socializations } = await supabase
-    .from("socializations")
-    .select("*")
-    .eq("unit_id", id)
-    .order("order_index");
+    .from("socializations").select("*").eq("unit_id", id).order("order_index");
 
   const { data: recollections } = await supabase
-    .from("recollections")
-    .select("*")
-    .eq("unit_id", id)
-    .order("order_index");
+    .from("recollections").select("*").eq("unit_id", id).order("order_index");
 
   type SocRow = { id: string; unit_id: string; episode_group: string; order_index: number; title: string; unlock_condition: string };
   const socialGroups = (socializations as SocRow[] ?? []).reduce((acc: Record<string, SocRow[]>, s: SocRow) => {
@@ -81,160 +68,247 @@ export default async function UnitProfilePage({ params }: Props) {
   }, {} as Record<string, SocRow[]>);
 
   return (
-    <div style={{ background: "var(--hbr-bg)", minHeight: "100vh" }}>
+    <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
-      {/* Back */}
-      <div style={{ display: "flex", alignItems: "center", padding: "12px 24px", borderBottom: "0.5px solid var(--hbr-border)", background: "var(--hbr-surface)" }}>
-        <Link href="/units" style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--hbr-muted)", textDecoration: "none" }}>
-          ← Back to all units
-        </Link>
-      </div>
+      {/* ── LEFT — Full height character art ── */}
+      <div style={{
+        width: 320, flexShrink: 0, position: "relative",
+        background: "var(--hbr-surface)",
+        borderRight: "0.5px solid var(--hbr-border)",
+        overflow: "hidden",
+      }}>
+        {/* Red grid overlay */}
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
 
-      {/* Hero */}
-      <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", borderBottom: "0.5px solid var(--hbr-border)" }}>
-        <div style={{ background: "var(--hbr-surface)", display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 20px", borderRight: "0.5px solid var(--hbr-border)" }}>
-          <div style={{ width: 120, height: 160, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {u.image_url
-              ? <img src={u.image_url} alt={u.name} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 6 }} />
-              : <span style={{ fontFamily: "monospace", fontSize: 40, fontWeight: 700, color: "rgba(255,255,255,0.06)" }}>
-                  {u.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
-                </span>
-            }
+        {/* Gradient overlay — bottom fade */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
+          background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)",
+          zIndex: 2, pointerEvents: "none",
+        }} />
+
+        {/* Character artwork */}
+        {u.image_url ? (
+          <img
+            src={u.image_url}
+            alt={u.name}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover", objectPosition: "top center",
+              zIndex: 0,
+            }}
+          />
+        ) : (
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <span style={{ fontFamily: "monospace", fontSize: 64, fontWeight: 700, color: "rgba(255,255,255,0.04)" }}>
+              {u.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
+            </span>
           </div>
+        )}
+
+        {/* Back button — top left */}
+        <div style={{ position: "absolute", top: 16, left: 16, zIndex: 10 }}>
+          <Link href="/units" style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
+            color: "var(--hbr-muted)", textDecoration: "none",
+            background: "rgba(7,7,14,0.7)", padding: "5px 10px",
+            borderRadius: 3, border: "0.5px solid var(--hbr-border)",
+            backdropFilter: "blur(4px)",
+          }}>
+            ← All Units
+          </Link>
         </div>
 
-        <div style={{ padding: 24 }}>
-          <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 6 }}>
+        {/* Unit name overlay — bottom */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 24px", zIndex: 3 }}>
+          <p style={{
+            fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em",
+            color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 4,
+          }}>
             // {u.company}
           </p>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{u.name}</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, lineHeight: 1.2 }}>
+            {u.name}
+          </h1>
           {u.name_jp && (
-            <p style={{ fontSize: 13, color: "var(--hbr-muted)", marginBottom: 14 }}>
+            <p style={{ fontSize: 11, color: "var(--hbr-muted)", marginBottom: 10 }}>
               {u.name_jp}{u.cv ? ` · CV: ${u.cv}` : ""}
             </p>
           )}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+          {/* Stat pills */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {[
-              { label: "Company", value: u.company },
-              { label: "Position", value: u.position },
-              { label: "Type", value: u.is_limited ? "Limited" : "Standard" },
+              { label: u.company },
+              { label: u.position },
+              { label: u.is_limited ? "Limited" : "Standard" },
             ].map((s) => (
-              <div key={s.label} style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 3, padding: "6px 12px" }}>
-                <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", textTransform: "capitalize" }}>{s.value}</div>
-              </div>
+              <span key={s.label} style={{
+                fontSize: 9, padding: "3px 8px", borderRadius: 2,
+                background: "rgba(255,255,255,0.07)",
+                border: "0.5px solid rgba(255,255,255,0.12)",
+                color: "var(--hbr-silver)", textTransform: "capitalize",
+                letterSpacing: "0.05em",
+              }}>
+                {s.label}
+              </span>
             ))}
           </div>
-          {u.description && <p style={{ fontSize: 12, color: "var(--hbr-muted)", lineHeight: 1.7, maxWidth: 520 }}>{u.description}</p>}
         </div>
       </div>
 
-      {/* Body */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 260px" }}>
-        <div style={{ padding: "20px 24px", borderRight: "0.5px solid var(--hbr-border)" }}>
+      {/* ── RIGHT — Scrollable content ── */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
 
-          {/* Memorias */}
-          <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
-            // Memorias
-          </span>
-          {!memorias || memorias.length === 0 ? (
-            <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 24 }}>No Memorias added yet.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
-              {(memorias as any[]).map((m: any) => {
-                const roleStyle = ROLE_COLOR[m.role] ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
-                return (
-                  <div key={m.id} style={{ display: "grid", gridTemplateColumns: "48px 1fr", alignItems: "center", gap: 12, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4, padding: "10px 12px" }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", fontSize: 12, fontWeight: 700, background: m.rarity === "SS" ? "rgba(200,160,80,0.12)" : "rgba(120,100,200,0.12)", color: RARITY_COLOR[m.rarity] ?? "#fff", border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.3)" : "rgba(120,100,200,0.3)"}`, flexShrink: 0 }}>
-                      {m.rarity}
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", marginBottom: 3 }}>{m.name}</div>
-                      <div style={{ fontSize: 10, color: "var(--hbr-muted)", lineHeight: 1.5, marginBottom: 5 }}>{m.skill_desc}</div>
-                      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 2, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>{m.role}</span>
-                        {m.attack_type !== "none" && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>{m.attack_type}</span>}
-                        {m.element !== "none" && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: ELEMENT_COLOR[m.element] ?? "#888", textTransform: "capitalize" }}>{ELEMENT_ICON[m.element]} {m.element}</span>}
-                        {m.is_limited && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>Limited</span>}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+        {/* Description */}
+        {u.description && (
+          <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.8, marginBottom: 28, maxWidth: 620 }}>
+            {u.description}
+          </p>
+        )}
+
+        {/* Quick stats */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
+          {[
+            { label: "Memorias", value: memorias?.length ?? 0 },
+            { label: "Bond Episodes", value: socializations?.length ?? 0 },
+            { label: "Recollections", value: recollections?.length ?? 0 },
+          ].map((s) => (
+            <div key={s.label} style={{
+              background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)",
+              borderRadius: 4, padding: "8px 16px", textAlign: "center",
+            }}>
+              <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 700, color: "#fff" }}>{s.value}</div>
+              <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
             </div>
-          )}
-
-          <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 20px" }} />
-
-          {/* Socialization */}
-          <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
-            // Socialization
-          </span>
-          {Object.keys(socialGroups).length === 0 ? (
-            <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 24 }}>Socialization not available for this unit.</p>
-          ) : (
-            <div style={{ marginBottom: 24 }}>
-              {Object.entries(socialGroups).map(([group, items]) => (
-                <div key={group} style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--hbr-silver)", marginBottom: 8, paddingBottom: 6, borderBottom: "0.5px solid var(--hbr-border)" }}>{group}</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    {(items as any[]).map((s: any) => (
-                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
-                        <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 22 }}>S{s.order_index}</div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{s.title}</div>
-                          <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{s.unlock_condition}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 20px" }} />
-
-          {/* Recollections */}
-          <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
-            // Recollections
-          </span>
-          {!recollections || recollections.length === 0 ? (
-            <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Recollections not available for this unit.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {(recollections as any[]).map((r: any) => (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
-                  <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 22 }}>R{r.order_index}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{r.title}</div>
-                    <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{r.unlock_condition}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
+          ))}
         </div>
 
-        {/* Sidebar */}
-        <div style={{ padding: 16, background: "var(--hbr-surface)" }}>
-          <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
-            // Quick stats
-          </span>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-            {[
-              { label: "Memorias", value: memorias?.length ?? 0 },
-              { label: "Bond eps", value: socializations?.length ?? 0 },
-              { label: "Recollections", value: recollections?.length ?? 0 },
-            ].map((s) => (
-              <div key={s.label} style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4, padding: "8px 10px" }}>
-                <div style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontFamily: "monospace", fontSize: 17, color: "#fff", fontWeight: 700 }}>{s.value}</div>
+        {/* ── MEMORIAS ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Memorias
+        </span>
+        {!memorias || memorias.length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 28 }}>No Memorias added yet.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+            {(memorias as any[]).map((m: any) => {
+              const roleStyle = ROLE_COLOR[m.role] ?? { bg: "rgba(255,255,255,0.05)", text: "#888" };
+              return (
+                <div key={m.id} style={{
+                  display: "grid", gridTemplateColumns: "56px 1fr",
+                  alignItems: "center", gap: 14,
+                  background: "var(--hbr-card)",
+                  border: "0.5px solid var(--hbr-border)",
+                  borderRadius: 6, padding: "12px 14px",
+                }}>
+                  {/* Memoria artwork or rarity box */}
+                  <div style={{
+                    width: 56, height: 56, borderRadius: 6, flexShrink: 0, overflow: "hidden",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontFamily: "monospace", fontSize: 13, fontWeight: 700,
+                    background: m.rarity === "SS" ? "rgba(200,160,80,0.12)" : "rgba(120,100,200,0.12)",
+                    color: RARITY_COLOR[m.rarity] ?? "#fff",
+                    border: `0.5px solid ${m.rarity === "SS" ? "rgba(200,160,80,0.3)" : "rgba(120,100,200,0.3)"}`,
+                  }}>
+                    {m.image_url
+                      ? <img src={m.image_url} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : m.rarity
+                    }
+                  </div>
+
+                  {/* Info */}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 3 }}>{m.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--hbr-muted)", lineHeight: 1.5, marginBottom: 6 }}>{m.skill_desc}</div>
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: roleStyle.bg, color: roleStyle.text, textTransform: "capitalize" }}>
+                        {m.role}
+                      </span>
+                      {m.attack_type !== "none" && (
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize" }}>
+                          {m.attack_type}
+                        </span>
+                      )}
+                      {m.element !== "none" && (
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: ELEMENT_COLOR[m.element] ?? "#888", textTransform: "capitalize" }}>
+                          {ELEMENT_ICON[m.element]} {m.element}
+                        </span>
+                      )}
+                      {m.is_limited && (
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050" }}>
+                          Limited
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 24px" }} />
+
+        {/* ── SOCIALIZATION ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Socialization
+        </span>
+        {Object.keys(socialGroups).length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", marginBottom: 28 }}>
+            Socialization not available for this unit.
+          </p>
+        ) : (
+          <div style={{ marginBottom: 28 }}>
+            {Object.entries(socialGroups).map(([group, items]) => (
+              <div key={group} style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "var(--hbr-silver)", marginBottom: 8, paddingBottom: 6, borderBottom: "0.5px solid var(--hbr-border)" }}>
+                  {group}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {(items as any[]).map((s: any) => (
+                    <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
+                      <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 24 }}>S{s.order_index}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{s.title}</div>
+                        <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{s.unlock_condition}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        )}
+
+        <hr style={{ border: "none", borderTop: "0.5px solid var(--hbr-border)", margin: "4px 0 24px" }} />
+
+        {/* ── RECOLLECTIONS ── */}
+        <span style={{ display: "block", fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>
+          // Recollections
+        </span>
+        {!recollections || recollections.length === 0 ? (
+          <p style={{ fontSize: 12, color: "var(--hbr-muted)", paddingBottom: 40 }}>
+            Recollections not available for this unit.
+          </p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingBottom: 40 }}>
+            {(recollections as any[]).map((r: any) => (
+              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 12px", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 10, color: "var(--hbr-red)", minWidth: 24 }}>R{r.order_index}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, color: "#fff", marginBottom: 2 }}>{r.title}</div>
+                  <div style={{ fontSize: 10, color: "var(--hbr-muted)" }}>{r.unlock_condition}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );
