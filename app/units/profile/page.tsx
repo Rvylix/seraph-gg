@@ -140,6 +140,12 @@ export default async function UnitProfilePage(props: any) {
                             {m.element}
                           </span>
                         )}
+                        {m.element2 && m.element2 !== "none" && (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 9, padding: "2px 7px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: ELEMENT_COLOR[m.element2] ?? "#888", textTransform: "capitalize" }}>
+                            {ELEMENT_ICON[m.element2] && <img src={ELEMENT_ICON[m.element2]} alt={m.element2} style={{ width: 12, height: 12, objectFit: "contain" }} />}
+                            {m.element2}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

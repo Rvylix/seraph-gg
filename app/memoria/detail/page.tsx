@@ -119,6 +119,12 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
                 {m.element}
               </span>
             )}
+            {m.element2 && m.element2 !== "none" && (
+              <span style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: 10, padding: "6px 0", borderRadius: 4, background: "rgba(0,0,0,0.5)", color: ELEMENT_COLOR[m.element2] ?? "#888", textTransform: "capitalize", backdropFilter: "blur(4px)" }}>
+                {ELEMENT_ICON[m.element2] && <img src={ELEMENT_ICON[m.element2]} alt={m.element2} style={{ width: 14, height: 14, objectFit: "contain" }} />}
+                {m.element2}
+              </span>
+            )}
             {m.is_limited && (
               <span style={{ flex: 1, textAlign: "center", fontSize: 10, padding: "6px 0", borderRadius: 4, background: "rgba(200,160,80,0.15)", color: "#C8A050" }}>
                 Limited
