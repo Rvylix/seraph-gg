@@ -127,7 +127,8 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
           <h1 style={{ fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 8, lineHeight: 1.2 }}>{m.name}</h1>
           <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 28, maxWidth: 560 }}>{m.skill_desc}</p>
 
-          {/* No skill data yet */}
+          {/* Debug + No skill data yet */}
+          <p style={{ fontFamily: "monospace", fontSize: 11, color: "var(--hbr-muted)", marginBottom: 12 }}>Debug: id={id} | skills={allSkills.length}</p>
           {allSkills.length === 0 && (
             <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px" }}>
               <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>Detailed skill data not added yet for this Memoria.</p>
