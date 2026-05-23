@@ -118,7 +118,7 @@ export function ToggleSkillCard({ group }: { group: any[] }) {
 
       {/* Notes */}
       {skill.notes && skill.notes.length > 0 && (
-        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
           {(skill.notes as string[]).map((note: string, i: number) => (
             <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
               <span style={{ color: typeInfo.color, fontSize: 12, marginTop: 2, flexShrink: 0 }}>*</span>
@@ -127,6 +127,31 @@ export function ToggleSkillCard({ group }: { group: any[] }) {
           ))}
         </div>
       )}
+
+      {/* Toggle row — bottom of card */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end", borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12 }}>
+        <span style={{ fontSize: 10, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 4 }}>
+          ↻ Tap to toggle
+        </span>
+        {group.map((g: any, i: number) => {
+          const gElemColor = ELEMENT_COLOR[g.element] ?? "#888";
+          const gElemIcon  = ELEMENT_ICON[g.element];
+          return (
+            <span key={i} style={{
+              display: "inline-flex", alignItems: "center", gap: 5,
+              fontSize: 12, padding: "5px 14px", borderRadius: 4,
+              background: activeIndex === i ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
+              border: `1px solid ${activeIndex === i ? gElemColor : "rgba(255,255,255,0.1)"}`,
+              color: activeIndex === i ? gElemColor : "var(--hbr-muted)",
+              textTransform: "capitalize", fontWeight: activeIndex === i ? 700 : 400,
+              transition: "all 0.15s",
+            }}>
+              {gElemIcon && <img src={gElemIcon} alt={g.element} style={{ width: 14, height: 14, objectFit: "contain" }} />}
+              {g.element}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 }
