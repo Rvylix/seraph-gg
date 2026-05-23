@@ -51,7 +51,7 @@ export default async function UnitProfilePage(props: any) {
 
       {/* LEFT — Full height character art */}
       <div style={{ width: 320, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: -1 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "45%", background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
         {u.image_url
           ? <img src={u.image_url} alt={u.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", zIndex: 0 }} />
