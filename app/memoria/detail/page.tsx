@@ -241,6 +241,16 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
               {skill.target}
             </span>
           )}
+          {skill.sp_cost != null && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(80,160,255,0.1)", color: "#80AAFF", border: "0.5px solid rgba(80,160,255,0.25)" }}>
+              {skill.sp_cost} SP
+            </span>
+          )}
+          {skill.max_uses != null && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.1)", color: "#C8A050", border: "0.5px solid rgba(200,160,80,0.25)" }}>
+              {skill.max_uses}× uses
+            </span>
+          )}
         </div>
       )}
 
