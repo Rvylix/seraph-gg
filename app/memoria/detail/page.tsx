@@ -188,19 +188,23 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
         )}
 
         {/* MAIN SKILLS */}
-        {mainSkills.length > 0 && (
+        {mainGroups.length > 0 && (
           <div style={{ marginBottom: 8 }}>
-            {mainSkills.map((s: any, i: number) => (
-              <SkillCard key={s.id} skill={s} index={i} total={mainSkills.length} />
+            {mainGroups.map((group: any[], i: number) => (
+              group.length > 1
+                ? <ToggleSkillCard key={group[0].id} group={group} />
+                : <SkillCard key={group[0].id} skill={group[0]} index={i} total={mainGroups.length} />
             ))}
           </div>
         )}
 
         {/* EX SKILLS */}
-        {exSkills.length > 0 && (
+        {exGroups.length > 0 && (
           <div style={{ marginBottom: 8 }}>
-            {exSkills.map((s: any, i: number) => (
-              <SkillCard key={s.id} skill={s} index={i} total={exSkills.length} />
+            {exGroups.map((group: any[], i: number) => (
+              group.length > 1
+                ? <ToggleSkillCard key={group[0].id} group={group} />
+                : <SkillCard key={group[0].id} skill={group[0]} index={i} total={exGroups.length} />
             ))}
           </div>
         )}
