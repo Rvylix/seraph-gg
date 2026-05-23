@@ -33,37 +33,38 @@ export function ToggleSkillCard({ group }: { group: any[] }) {
         userSelect: "none",
       }}
     >
-      {/* Toggle indicator — top right */}
+      {/* Toggle indicator — bottom right, big and obvious */}
       <div style={{
-        position: "absolute", top: 14, right: 16,
-        display: "flex", alignItems: "center", gap: 6,
+        marginTop: 16,
+        display: "flex", alignItems: "center", gap: 8,
+        justifyContent: "flex-end",
+        borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12,
       }}>
-        {/* Element dots */}
+        <span style={{ fontSize: 10, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+          ↻ Tap card to toggle element
+        </span>
         {group.map((g: any, i: number) => {
           const gElemColor = ELEMENT_COLOR[g.element] ?? "#888";
           const gElemIcon  = ELEMENT_ICON[g.element];
           return (
             <span key={i} style={{
-              display: "inline-flex", alignItems: "center", gap: 3,
-              fontSize: 9, padding: "2px 8px", borderRadius: 3,
-              background: activeIndex === i ? "rgba(255,255,255,0.1)" : "transparent",
-              border: `0.5px solid ${activeIndex === i ? gElemColor : "rgba(255,255,255,0.15)"}`,
+              display: "inline-flex", alignItems: "center", gap: 5,
+              fontSize: 12, padding: "5px 14px", borderRadius: 4,
+              background: activeIndex === i ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)",
+              border: `1px solid ${activeIndex === i ? gElemColor : "rgba(255,255,255,0.1)"}`,
               color: activeIndex === i ? gElemColor : "var(--hbr-muted)",
-              textTransform: "capitalize",
+              textTransform: "capitalize", fontWeight: activeIndex === i ? 700 : 400,
+              transition: "all 0.15s",
             }}>
-              {gElemIcon && <img src={gElemIcon} alt={g.element} style={{ width: 11, height: 11, objectFit: "contain" }} />}
+              {gElemIcon && <img src={gElemIcon} alt={g.element} style={{ width: 14, height: 14, objectFit: "contain" }} />}
               {g.element}
             </span>
           );
         })}
-        {/* Tap hint */}
-        <span style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.05em", marginLeft: 4 }}>
-          ↻ tap
-        </span>
       </div>
 
       {/* Type badge + skill name */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, paddingRight: 120 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{
           fontSize: 10, padding: "3px 10px", borderRadius: 3,
           background: typeInfo.bg, color: typeInfo.color,
