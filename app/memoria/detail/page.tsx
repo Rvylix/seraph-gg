@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { ELEMENT_ICON, ELEMENT_COLOR, ATTACK_ICON, ROLE_COLOR, RARITY_ICON, RARITY_COLOR, COMPANY_ICON } from "@/lib/icons";
 import Link from "next/link";
@@ -56,9 +57,29 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
   const backHref   = from ? `/units/profile?id=${from}` : "/units";
 
   const allSkills  = (skills ?? []) as any[];
+
+  // Group skills — skills with same toggle_group are toggle variants
+  function groupSkills(skillList: any[]) {
+    const groups: any[][] = [];
+    const seen = new Set<string>();
+    for (const s of skillList) {
+      if (s.toggle_group) {
+        if (!seen.has(s.toggle_group)) {
+          seen.add(s.toggle_group);
+          groups.push(skillList.filter(x => x.toggle_group === s.toggle_group));
+        }
+      } else {
+        groups.push([s]);
+      }
+    }
+    return groups;
+  }
+
   const mainSkills = allSkills.filter(s => s.skill_type === "skill");
   const exSkills   = allSkills.filter(s => s.skill_type === "ex_skill");
   const passives   = allSkills.filter(s => s.skill_type === "passive");
+  const mainGroups = groupSkills(mainSkills);
+  const exGroups   = groupSkills(exSkills);
 
   return (
     <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
@@ -217,6 +238,107 @@ function SkillCard({ skill, index, total }: { skill: any; index: number; total: 
       </div>
 
       {/* Attack type + element + hits + target */}
+      {!isPassive && (skill.attack_type || skill.element || skill.hits || skill.target) && (
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14, alignItems: "center" }}>
+          {skill.attack_type && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", textTransform: "capitalize", border: "0.5px solid var(--hbr-border)" }}>
+              {atkIcon && <img src={atkIcon} alt={skill.attack_type} style={{ width: 13, height: 13, objectFit: "contain" }} />}
+              {skill.attack_type}
+            </span>
+          )}
+          {skill.element && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: elemColor, textTransform: "capitalize", border: "0.5px solid var(--hbr-border)" }}>
+              {elemIcon && <img src={elemIcon} alt={skill.element} style={{ width: 13, height: 13, objectFit: "contain" }} />}
+              {skill.element}
+            </span>
+          )}
+          {skill.hits && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+              {skill.hits} hit{skill.hits > 1 ? "s" : ""}
+            </span>
+          )}
+          {skill.target && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>
+              {skill.target}
+            </span>
+          )}
+          {skill.sp_cost != null && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(80,160,255,0.1)", color: "#80AAFF", border: "0.5px solid rgba(80,160,255,0.25)" }}>
+              {skill.sp_cost} SP
+            </span>
+          )}
+          {skill.max_uses != null && (
+            <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: "rgba(200,160,80,0.1)", color: "#C8A050", border: "0.5px solid rgba(200,160,80,0.25)" }}>
+              {skill.max_uses}× uses
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Description */}
+      <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: skill.notes?.length > 0 ? 14 : 0 }}>
+        {skill.power}
+      </p>
+
+      {/* Notes */}
+      {skill.notes && skill.notes.length > 0 && (
+        <div style={{ borderTop: "0.5px solid var(--hbr-border)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+          {(skill.notes as string[]).map((note: string, i: number) => (
+            <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <span style={{ color: typeInfo.color, fontSize: 12, marginTop: 2, flexShrink: 0 }}>*</span>
+              <span style={{ fontSize: 12, color: "var(--hbr-silver)", lineHeight: 1.6 }}>{note}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+function ToggleSkillCard({ group }: { group: any[] }) {
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const skill = group[activeIndex];
+  const typeInfo = SKILL_TYPE_LABEL[skill.skill_type] ?? { label: skill.skill_type, color: "#888", bg: "rgba(255,255,255,0.05)" };
+  const elemColor = ELEMENT_COLOR[skill.element] ?? "#888";
+  const elemIcon  = skill.element ? ELEMENT_ICON[skill.element] : null;
+  const atkIcon   = skill.attack_type ? ATTACK_ICON[skill.attack_type] : null;
+  const isPassive = skill.skill_type === "passive";
+
+  return (
+    <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "18px 22px", marginBottom: 10, borderLeft: `2px solid ${typeInfo.color}` }}>
+
+      {/* Type badge + skill name + toggle buttons */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: typeInfo.bg, color: typeInfo.color, fontWeight: 600, letterSpacing: "0.05em", flexShrink: 0, textTransform: "uppercase" }}>
+          {typeInfo.label}
+        </span>
+        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff", flex: 1 }}>{skill.skill_name}</span>
+
+        {/* Toggle buttons */}
+        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <span style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 4 }}>Toggle</span>
+          {group.map((g: any, i: number) => {
+            const gElemColor = ELEMENT_COLOR[g.element] ?? "#888";
+            const gElemIcon  = ELEMENT_ICON[g.element];
+            return (
+              <button key={i} onClick={() => setActiveIndex(i)} style={{
+                display: "inline-flex", alignItems: "center", gap: 4,
+                fontSize: 10, padding: "3px 10px", borderRadius: 3, cursor: "pointer",
+                background: activeIndex === i ? "rgba(255,255,255,0.1)" : "transparent",
+                border: `0.5px solid ${activeIndex === i ? gElemColor : "rgba(255,255,255,0.15)"}`,
+                color: activeIndex === i ? gElemColor : "var(--hbr-muted)",
+                textTransform: "capitalize", transition: "all 0.15s",
+              }}>
+                {gElemIcon && <img src={gElemIcon} alt={g.element} style={{ width: 12, height: 12, objectFit: "contain" }} />}
+                {g.element}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Attack type + element + hits + target + SP + uses */}
       {!isPassive && (skill.attack_type || skill.element || skill.hits || skill.target) && (
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14, alignItems: "center" }}>
           {skill.attack_type && (
