@@ -60,7 +60,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
               borderRadius: 6, overflow: "hidden", cursor: "pointer",
             }}>
               {/* Avatar */}
-              <div style={{ width: "100%", aspectRatio: "3/4", background: "var(--hbr-surface)", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+              <div style={{ width: "100%", height: 220, background: "var(--hbr-surface)", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", overflow: "hidden" }}>
                 {unit.image_url ? (
                   <img src={unit.image_url} alt={unit.name} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }} />
                 ) : (
