@@ -85,10 +85,10 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
     <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
       {/* ── LEFT — Full height Memoria artwork ── */}
-      <div style={{ width: "40%", flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
+      <div style={{ width: 380, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
         {/* Grid overlay */}
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: -1 }} />
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
 
         {/* Bottom gradient */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, #0F0F1A 0%, rgba(15,15,26,0.6) 60%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
@@ -179,6 +179,42 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
         <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Memoria</p>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 6, lineHeight: 1.15 }}>{m.name}</h1>
         <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>{m.skill_desc}</p>
+
+        {/* STATS */}
+        {(m.stat_dp_pct || m.stat_hp_pct || m.stat_str_pct || m.stat_dex_pct ||
+          m.stat_vit_pct || m.stat_spr_pct || m.stat_int_pct || m.stat_lck_pct) && (
+          <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px", marginBottom: 20 }}>
+            <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 16 }}>// Stats</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 32px" }}>
+              {[
+                { label: "DP",  pct: m.stat_dp_pct,  flat: m.stat_dp_flat  },
+                { label: "HP",  pct: m.stat_hp_pct,  flat: m.stat_hp_flat  },
+                { label: "STR", pct: m.stat_str_pct, flat: m.stat_str_flat },
+                { label: "DEX", pct: m.stat_dex_pct, flat: m.stat_dex_flat },
+                { label: "VIT", pct: m.stat_vit_pct, flat: m.stat_vit_flat },
+                { label: "SPR", pct: m.stat_spr_pct, flat: m.stat_spr_flat },
+                { label: "INT", pct: m.stat_int_pct, flat: m.stat_int_flat },
+                { label: "LCK", pct: m.stat_lck_pct, flat: m.stat_lck_flat },
+              ].map((s) => (
+                <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 0", borderBottom: "0.5px solid rgba(255,255,255,0.04)" }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--hbr-muted)", minWidth: 36, letterSpacing: "0.05em" }}>{s.label}</span>
+                  {s.pct != null || s.flat != null ? (
+                    <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                      {s.pct != null && (
+                        <span style={{ fontSize: 14, fontWeight: 700, color: "#80DDFF", fontFamily: "monospace" }}>+{s.pct}%</span>
+                      )}
+                      {s.flat != null && (
+                        <span style={{ fontSize: 14, fontWeight: 700, color: "#FFB3C6", fontFamily: "monospace" }}>+{s.flat}</span>
+                      )}
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: 13, color: "var(--hbr-muted)", opacity: 0.4 }}>—</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* No skill data */}
         {allSkills.length === 0 && (
