@@ -194,7 +194,7 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
                     }
                     {/* Rarity icon — top right */}
                     {rarityIcon && (
-                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 18, objectFit: "contain" }} />
+                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 45, objectFit: "contain" }} />
                     )}
                     {/* Limited badge */}
                     {m.is_limited && (
