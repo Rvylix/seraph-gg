@@ -25,28 +25,27 @@ export function UnitsGrid({ units }: { units: any[] }) {
         position: "relative", height: 260, overflow: "hidden",
         background: "var(--hbr-surface)",
       }}>
-        {/* Company artwork — fills right, fades to left */}
+        {/* Company artwork — full width, fades cleanly left */}
         {artwork ? (
           <>
             <img src={artwork} alt={activeCompany} style={{
-              position: "absolute", top: 0, right: 0,
-              height: "100%", width: "70%",
+              position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+              width: "100%", height: "100%",
               objectFit: "cover", objectPosition: "center top",
               zIndex: 0,
             }} />
-            {/* Gradient: left is fully opaque bg, right fades to transparent */}
+            {/* Clean gradient — solid left, fully transparent right */}
             <div style={{
               position: "absolute", inset: 0, zIndex: 1,
-              background: `linear-gradient(to right, var(--hbr-surface) 25%, rgba(15,15,26,0.92) 45%, rgba(15,15,26,0.4) 70%, rgba(15,15,26,0.1) 100%)`,
+              background: "linear-gradient(to right, #0F0F1A 0%, #0F0F1A 20%, rgba(15,15,26,0.95) 35%, rgba(15,15,26,0.6) 55%, rgba(15,15,26,0.1) 80%, transparent 100%)",
             }} />
-            {/* Bottom fade */}
+            {/* Bottom fade into tabs */}
             <div style={{
-              position: "absolute", bottom: 0, left: 0, right: 0, height: 80, zIndex: 1,
-              background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)",
+              position: "absolute", bottom: 0, left: 0, right: 0, height: 60, zIndex: 1,
+              background: "linear-gradient(to top, #0F0F1A 0%, transparent 100%)",
             }} />
           </>
         ) : (
-          /* Default — red grid when no artwork */
           <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, zIndex: 0 }} />
         )}
 
@@ -72,7 +71,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
             </>
           ) : (
             <>
-              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Squad</p>
+              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Company</p>
               <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
                 {logo && (
                   <img src={logo} alt={activeCompany} style={{ height: 56, objectFit: "contain", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))" }} />
