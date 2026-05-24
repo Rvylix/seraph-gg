@@ -88,7 +88,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
       <div style={{ width: "35%", flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
         {/* Grid overlay */}
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }} />
 
         {/* Bottom gradient */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, #0F0F1A 0%, rgba(15,15,26,0.6) 60%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
