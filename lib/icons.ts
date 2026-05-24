@@ -16,6 +16,19 @@ export const ATTACK_ICON: Record<string, string> = {
   none:   "",
 };
 
+export const COMPANY_ARTWORK: Record<string, string> = {
+  "31-A":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-A.jpg",
+  "31-B":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-B.jpg",
+  "31-C":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-C.jpg",
+  "31-D":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-D.jpg",
+  "31-E":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-E.jpg",
+  "31-F":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-F.jpg",
+  "31-X":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-31-X.jpg",
+  "30-G":        "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-30-G.jpg",
+  "HQ":          "https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/company%20artwork/kv-HQ.jpg",
+  "ANGEL BEATS": "",
+};
+
 export const COMPANY_ICON: Record<string, string> = {
   "31-A":        `${BASE}/company/31A_Logo.webp`,
   "31-B":        `${BASE}/company/31B_Logo.webp`,
