@@ -13,77 +13,109 @@ const COMPANY_COLOR: Record<string, string> = {
 export function UnitsGrid({ units }: { units: any[] }) {
   const [activeCompany, setActiveCompany] = useState("All");
   const companies = ["All", ...Array.from(new Set(units.map(u => u.company)))];
-  const filtered = activeCompany === "All" ? units : units.filter(u => u.company === activeCompany);
-  const artwork = activeCompany !== "All" ? COMPANY_ARTWORK[activeCompany] : "";
-  const logo    = activeCompany !== "All" ? COMPANY_ICON[activeCompany] : "";
-  const accent  = activeCompany !== "All" ? (COMPANY_COLOR[activeCompany] ?? "var(--hbr-red)") : "var(--hbr-red)";
+  const filtered  = activeCompany === "All" ? units : units.filter(u => u.company === activeCompany);
+  const artwork   = activeCompany !== "All" ? COMPANY_ARTWORK[activeCompany] : "";
+  const logo      = activeCompany !== "All" ? COMPANY_ICON[activeCompany] : "";
+  const accent    = COMPANY_COLOR[activeCompany] ?? "var(--hbr-red)";
 
   return (
     <>
-      {/* Company banner header */}
+      {/* ── CINEMATIC BANNER ── */}
       <div style={{
-        position: "relative", height: 160, overflow: "hidden",
+        position: "relative", height: 260, overflow: "hidden",
         background: "var(--hbr-surface)",
-        borderBottom: "0.5px solid var(--hbr-border)",
       }}>
-        {/* Company artwork — right side, fades left */}
-        {artwork && (
+        {/* Company artwork — fills right, fades to left */}
+        {artwork ? (
           <>
             <img src={artwork} alt={activeCompany} style={{
               position: "absolute", top: 0, right: 0,
-              height: "100%", width: "60%",
+              height: "100%", width: "70%",
               objectFit: "cover", objectPosition: "center top",
               zIndex: 0,
             }} />
-            {/* Gradient fade — right (visible) to left (transparent) */}
+            {/* Gradient: left is fully opaque bg, right fades to transparent */}
             <div style={{
               position: "absolute", inset: 0, zIndex: 1,
-              background: "linear-gradient(to right, var(--hbr-surface) 30%, rgba(15,15,26,0.85) 55%, rgba(15,15,26,0.2) 100%)",
+              background: `linear-gradient(to right, var(--hbr-surface) 25%, rgba(15,15,26,0.92) 45%, rgba(15,15,26,0.4) 70%, rgba(15,15,26,0.1) 100%)`,
+            }} />
+            {/* Bottom fade */}
+            <div style={{
+              position: "absolute", bottom: 0, left: 0, right: 0, height: 80, zIndex: 1,
+              background: "linear-gradient(to top, var(--hbr-surface) 0%, transparent 100%)",
             }} />
           </>
+        ) : (
+          /* Default — red grid when no artwork */
+          <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, zIndex: 0 }} />
         )}
 
-        {/* Red grid overlay */}
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", opacity: 0.5 }} />
+        {/* Accent color line at bottom */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 2, zIndex: 3,
+          background: activeCompany !== "All"
+            ? `linear-gradient(to right, ${accent}, transparent)`
+            : "var(--hbr-border)",
+        }} />
 
-        {/* Content */}
-        <div style={{ position: "relative", zIndex: 3, padding: "24px 24px 0", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        {/* Content — left aligned, vertically centered */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 2,
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          padding: "0 36px",
+        }}>
           {activeCompany === "All" ? (
             <>
-              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Roster</p>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 4 }}>All Units</h1>
-              <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>{units.length} characters total</p>
+              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 10 }}>// Roster</p>
+              <h1 style={{ fontSize: 36, fontWeight: 700, color: "#fff", marginBottom: 6, lineHeight: 1 }}>Units</h1>
+              <p style={{ fontSize: 13, color: "var(--hbr-muted)" }}>{units.length} characters · Select a company to filter</p>
             </>
           ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              {logo && <img src={logo} alt={activeCompany} style={{ height: 52, objectFit: "contain" }} />}
-              <div>
-                <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 6 }}>// Company</p>
-                <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{activeCompany}</h1>
-                <p style={{ fontSize: 12, color: "var(--hbr-muted)" }}>{filtered.length} unit{filtered.length !== 1 ? "s" : ""}</p>
+            <>
+              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Squad</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
+                {logo && (
+                  <img src={logo} alt={activeCompany} style={{ height: 56, objectFit: "contain", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))" }} />
+                )}
+                <h1 style={{ fontSize: 40, fontWeight: 700, color: "#fff", lineHeight: 1, letterSpacing: "-0.01em" }}>
+                  {activeCompany}
+                </h1>
               </div>
-            </div>
+              <p style={{ fontSize: 13, color: "var(--hbr-muted)" }}>
+                {filtered.length} unit{filtered.length !== 1 ? "s" : ""}
+              </p>
+            </>
           )}
         </div>
       </div>
 
-      {/* Company filter tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "0.5px solid var(--hbr-border)", background: "var(--hbr-surface)", overflowX: "auto" }}>
-        {companies.map((c) => (
-          <button key={c} onClick={() => setActiveCompany(c)} style={{
-            fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
-            padding: "10px 18px", cursor: "pointer", whiteSpace: "nowrap",
-            background: "transparent", border: "none",
-            borderBottom: activeCompany === c ? `2px solid ${COMPANY_COLOR[c] ?? "var(--hbr-red)"}` : "2px solid transparent",
-            color: activeCompany === c ? (COMPANY_COLOR[c] ?? "var(--hbr-red)") : "var(--hbr-muted)",
-            transition: "color 0.2s",
-          }}>
-            {c}
-          </button>
-        ))}
+      {/* ── COMPANY FILTER TABS ── */}
+      <div style={{
+        display: "flex", gap: 0,
+        borderBottom: "0.5px solid var(--hbr-border)",
+        background: "var(--hbr-surface)",
+        overflowX: "auto",
+        position: "sticky", top: 49, zIndex: 10,
+      }}>
+        {companies.map((c) => {
+          const isActive = activeCompany === c;
+          const color = COMPANY_COLOR[c] ?? "var(--hbr-red)";
+          return (
+            <button key={c} onClick={() => setActiveCompany(c)} style={{
+              fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+              padding: "11px 20px", cursor: "pointer", whiteSpace: "nowrap",
+              background: "transparent", border: "none",
+              borderBottom: isActive ? `2px solid ${color}` : "2px solid transparent",
+              color: isActive ? color : "var(--hbr-muted)",
+              transition: "color 0.2s",
+            }}>
+              {c}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Unit grid */}
+      {/* ── UNIT GRID ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10, padding: 20 }}>
         {filtered.map((unit) => (
           <Link key={unit.id} href={`/units/profile?id=${unit.id}`} style={{ textDecoration: "none" }}>
