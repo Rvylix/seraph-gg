@@ -1,32 +1,36 @@
-import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { HomeClient } from "./HomeClient";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  // Fetch current + adjacent chapters
+  const { data: chapters } = await supabase
+    .from("story_chapters")
+    .select("id, chapter_number, title, chapter_type, is_released, image_url")
+    .eq("chapter_type", "main")
+    .order("chapter_number");
+
+  // Fetch newest memorias (last 6 added)
+  const { data: newMemorias } = await supabase
+    .from("memorias")
+    .select("id, name, rarity, image_url, role, element, attack_type, unit_id, units!memorias_unit_id_fkey(id, name)")
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  // Fetch live + upcoming events
+  const { data: events } = await supabase
+    .from("events")
+    .select("*")
+    .in("status", ["live", "upcoming"])
+    .order("starts_at")
+    .limit(6);
+
   return (
-    <div>
-      <section style={{
-        position: "relative", padding: "40px 24px 32px",
-        borderBottom: "0.5px solid var(--hbr-border)",
-        background: "var(--hbr-surface)", overflow: "hidden",
-      }}>
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
-        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>
-          // Heaven Burns Red — Global Resource Hub
-        </p>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", lineHeight: 1.15, marginBottom: 6 }}>
-          Embrace The<br />
-          <span style={{ color: "var(--hbr-red)" }}>Ultimate Sorrow.</span>
-        </h1>
-        <p style={{ fontSize: 13, color: "var(--hbr-muted)", marginBottom: 24 }}>
-          Memoria database · Event tracker · Squad showcase · Progression guides
-        </p>
-        <div style={{ display: "flex", gap: 12 }}>
-          <Link href="/memoria" className="hbr-btn-primary">Browse Memoria DB</Link>
-          <Link href="/guides"  className="hbr-btn-outline">New Player Guide</Link>
-        </div>
-      </section>
-      <div style={{ padding: "32px 24px", color: "var(--hbr-muted)", fontSize: 13 }}>
-        Connect Supabase to load live events, Memorias, and guides.
-      </div>
-    </div>
+    <HomeClient
+      chapters={chapters ?? []}
+      newMemorias={newMemorias ?? []}
+      events={events ?? []}
+    />
   );
 }
