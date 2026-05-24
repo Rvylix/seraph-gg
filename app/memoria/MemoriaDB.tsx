@@ -61,7 +61,7 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
       if (unisonOnly         && !m.has_unison)                            return false;
       return true;
     });
-  }, [memorias, search, rarities, roles, elements, attackTypes, unitFilter, newOnly, limitedOnly]);
+  }, [memorias, search, rarities, roles, elements, attackTypes, unitFilter, newOnly, limitedOnly, resonanceOnly, unisonOnly]);
 
   const hasFilters = rarities.length || roles.length || elements.length || attackTypes.length || unitFilter || limitedOnly || resonanceOnly || unisonOnly || search;
 
