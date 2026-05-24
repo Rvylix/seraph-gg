@@ -85,10 +85,10 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
     <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
       {/* ── LEFT — Full height Memoria artwork ── */}
-      <div style={{ width: "35%", flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
+      <div style={{ width: 380, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
         {/* Grid overlay */}
-        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }} />
+        <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
 
         {/* Bottom gradient */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, #0F0F1A 0%, rgba(15,15,26,0.6) 60%, transparent 100%)", zIndex: 2, pointerEvents: "none" }} />
@@ -116,7 +116,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
         {/* Rarity icon — top right, big */}
         {rarityIcon && (
           <div style={{ position: "absolute", top: 12, right: 16, zIndex: 10 }}>
-            <img src={rarityIcon} alt={m.rarity} style={{ height: 80, objectFit: "contain" }} />
+            <img src={rarityIcon} alt={m.rarity} style={{ height: 48, objectFit: "contain" }} />
           </div>
         )}
 
@@ -212,6 +212,36 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* RESONANCE EFFECT */}
+        {m.resonance_name && (
+          <div style={{ background: "linear-gradient(135deg, rgba(180,80,220,0.08) 0%, rgba(100,60,180,0.08) 100%)", border: "0.5px solid rgba(180,80,220,0.3)", borderRadius: 8, padding: "20px 24px", marginBottom: 16 }}>
+            <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", color: "#CC88FF", textTransform: "uppercase", marginBottom: 14 }}>// Resonance Effect</p>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+              {/* Resonance icon */}
+              <div style={{ width: 56, height: 56, borderRadius: "50%", flexShrink: 0, background: "rgba(180,80,220,0.15)", border: "1px solid rgba(180,80,220,0.3)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                {m.resonance_icon_url
+                  ? <img src={m.resonance_icon_url} alt={m.resonance_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <span style={{ fontSize: 20 }}>✦</span>
+                }
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{m.resonance_name}</span>
+                  {m.resonance_level != null && (
+                    <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 3, background: "rgba(180,80,220,0.15)", color: "#CC88FF", border: "0.5px solid rgba(180,80,220,0.3)" }}>
+                      Lv. {m.resonance_level}
+                    </span>
+                  )}
+                </div>
+                <p style={{ fontSize: 13, color: "var(--hbr-silver)", lineHeight: 1.7, marginBottom: 12 }}>{m.resonance_desc}</p>
+                <p style={{ fontSize: 11, color: "var(--hbr-muted)", lineHeight: 1.6, fontStyle: "italic", borderTop: "0.5px solid rgba(180,80,220,0.15)", paddingTop: 10 }}>
+                  * Resonance Effects only activate when this Memoria is equipped as a support unit for an SS &lt;Resonance&gt; Memoria. These effects do not activate when deployed as a main unit.
+                </p>
+              </div>
             </div>
           </div>
         )}
