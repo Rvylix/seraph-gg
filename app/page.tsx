@@ -15,6 +15,7 @@ export default async function HomePage() {
   const { data: newMemorias } = await supabase
     .from("memorias")
     .select("id, name, rarity, image_url, role, element, attack_type, unit_id, units!memorias_unit_id_fkey(id, name)")
+    .order("released_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(6);
 
