@@ -170,13 +170,16 @@ export function HomeClient({ chapters, newMemorias, events }: { chapters: any[];
         position: "relative", borderRadius: 12, overflow: "hidden",
         background: "var(--hbr-surface)", border: "0.5px solid var(--hbr-border)",
         padding: "48px 40px", marginBottom: 40,
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24,
       }}>
         <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, opacity: 0.6 }} />
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 20% 50%, rgba(204,34,34,0.08) 0%, transparent 60%)" }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
+
+        {/* Left — text content */}
+        <div style={{ position: "relative", zIndex: 1, flex: 1 }}>
           <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>// Heaven Burns Red — Global</p>
           <h1 style={{ fontSize: 40, fontWeight: 700, color: "#fff", lineHeight: 1.1, marginBottom: 10 }}>
-            Embrace The<br /><span style={{ color: "var(--hbr-red)" }}>Ultimate Sorrow.</span>
+            Fight. Survive.<br /><span style={{ color: "var(--hbr-red)" }}>Never Burn Out.</span>
           </h1>
           <p style={{ fontSize: 14, color: "var(--hbr-muted)", marginBottom: 24, maxWidth: 480 }}>
             Memoria database · Event tracker · Unit profiles · Story guide
@@ -185,6 +188,15 @@ export function HomeClient({ chapters, newMemorias, events }: { chapters: any[];
             <Link href="/memoria" className="hbr-btn-primary">Browse Memoria DB</Link>
             <Link href="/units" className="hbr-btn-outline">View All Units</Link>
           </div>
+        </div>
+
+        {/* Right — HBR game logo */}
+        <div style={{ position: "relative", zIndex: 1, flexShrink: 0 }}>
+          <img
+            src="https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/logo/HBR-Logo.png"
+            alt="Heaven Burns Red"
+            style={{ height: 140, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(204,34,34,0.3))" }}
+          />
         </div>
       </div>
 
