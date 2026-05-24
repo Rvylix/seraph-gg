@@ -179,10 +179,10 @@ export function HomeClient({ chapters, newMemorias, events }: { chapters: any[];
         <div style={{ position: "relative", zIndex: 1, flex: 1 }}>
           <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 12 }}>// Heaven Burns Red — Global</p>
           <h1 style={{ fontSize: 40, fontWeight: 700, color: "#fff", lineHeight: 1.1, marginBottom: 10 }}>
-            Fight. Survive.<br /><span style={{ color: "var(--hbr-red)" }}>Never Burn Out.</span>
+            Embrace The<br /><span style={{ color: "var(--hbr-red)" }}>Ultimate Sorrow.</span>
           </h1>
           <p style={{ fontSize: 14, color: "var(--hbr-muted)", marginBottom: 24, maxWidth: 480 }}>
-            Memoria database · Event tracker · Unit profiles · Story guide
+            Memoria database · Event tracker · Unit profiles · Guides
           </p>
           <div style={{ display: "flex", gap: 12 }}>
             <Link href="/memoria" className="hbr-btn-primary">Browse Memoria DB</Link>
@@ -195,7 +195,7 @@ export function HomeClient({ chapters, newMemorias, events }: { chapters: any[];
           <img
             src="https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/logo/HBR-Logo.png"
             alt="Heaven Burns Red"
-            style={{ height: 140, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(204,34,34,0.3))" }}
+            style={{ height: 275, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(204,34,34,0.3))" }}
           />
         </div>
       </div>
