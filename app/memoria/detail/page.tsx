@@ -223,20 +223,15 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
           </div>
         )}
 
-        {/* MAIN SKILLS */}
-        {mainGroups.length > 0 && (
-          <div style={{ marginBottom: 8 }}>
+        {/* SKILLS + EX SKILLS — one box */}
+        {(mainGroups.length > 0 || exGroups.length > 0) && (
+          <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px", marginBottom: 16 }}>
+            <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 16 }}>// Skills</p>
             {mainGroups.map((group: any[], i: number) => (
               group.length > 1
                 ? <ToggleSkillCard key={group[0].id} group={group} />
                 : <SkillCard key={group[0].id} skill={group[0]} index={i} total={mainGroups.length} />
             ))}
-          </div>
-        )}
-
-        {/* EX SKILLS */}
-        {exGroups.length > 0 && (
-          <div style={{ marginBottom: 8 }}>
             {exGroups.map((group: any[], i: number) => (
               group.length > 1
                 ? <ToggleSkillCard key={group[0].id} group={group} />
@@ -245,9 +240,10 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
           </div>
         )}
 
-        {/* PASSIVES */}
+        {/* PASSIVES — separate box */}
         {passives.length > 0 && (
-          <div style={{ marginBottom: 8 }}>
+          <div style={{ background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 8, padding: "20px 24px", marginBottom: 16 }}>
+            <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.15em", color: "#80FFAA", textTransform: "uppercase", marginBottom: 16 }}>// Passive</p>
             {passives.map((s: any, i: number) => (
               <SkillCard key={s.id} skill={s} index={i} total={passives.length} />
             ))}
