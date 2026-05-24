@@ -31,7 +31,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
             <img src={artwork} alt={activeCompany} style={{
               position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
               width: "100%", height: "100%",
-              objectFit: "contain", objectPosition: "right center",
+              objectFit: "cover", objectPosition: "right center",
               zIndex: 0,
             }} />
             {/* Clean gradient — solid left, fully transparent right */}
@@ -71,7 +71,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
             </>
           ) : (
             <>
-              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Company</p>
+              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Squad</p>
               <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
                 {logo && (
                   <img src={logo} alt={activeCompany} style={{ height: 56, objectFit: "contain", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))" }} />
