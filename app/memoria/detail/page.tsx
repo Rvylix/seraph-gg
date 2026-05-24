@@ -116,7 +116,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
         {/* Rarity icon — top right, big */}
         {rarityIcon && (
           <div style={{ position: "absolute", top: 12, right: 16, zIndex: 10 }}>
-            <img src={rarityIcon} alt={m.rarity} style={{ height: 55, objectFit: "contain" }} />
+            <img src={rarityIcon} alt={m.rarity} style={{ height: 80, objectFit: "contain" }} />
           </div>
         )}
 
