@@ -40,7 +40,9 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
   const [attackTypes, setAttackTypes] = useState<string[]>([]);
   const [unitFilter,  setUnitFilter]  = useState("");
   const [newOnly,     setNewOnly]     = useState(false);
-  const [limitedOnly, setLimitedOnly] = useState(false);
+  const [limitedOnly,  setLimitedOnly]  = useState(false);
+  const [resonanceOnly, setResonanceOnly] = useState(false);
+  const [unisonOnly,    setUnisonOnly]    = useState(false);
 
   function toggle<T>(arr: T[], setArr: (a: T[]) => void, val: T) {
     setArr(arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val]);
@@ -55,11 +57,13 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
       if (elements.length    && !elements.includes(m.element) && !elements.includes(m.element2)) return false;
       if (unitFilter         && m.units?.id !== unitFilter)               return false;
       if (limitedOnly        && !m.is_limited)                            return false;
+      if (resonanceOnly      && !m.has_resonance)                         return false;
+      if (unisonOnly         && !m.has_unison)                            return false;
       return true;
     });
   }, [memorias, search, rarities, roles, elements, attackTypes, unitFilter, newOnly, limitedOnly]);
 
-  const hasFilters = rarities.length || roles.length || elements.length || attackTypes.length || unitFilter || limitedOnly || search;
+  const hasFilters = rarities.length || roles.length || elements.length || attackTypes.length || unitFilter || limitedOnly || resonanceOnly || unisonOnly || search;
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "calc(100vh - 100px)" }}>
@@ -152,6 +156,12 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
             <FilterChip active={limitedOnly} onClick={() => setLimitedOnly(!limitedOnly)}>
               Limited only
             </FilterChip>
+            <FilterChip active={resonanceOnly} onClick={() => setResonanceOnly(!resonanceOnly)}>
+              Resonance Effect
+            </FilterChip>
+            <FilterChip active={unisonOnly} onClick={() => setUnisonOnly(!unisonOnly)}>
+              Unison
+            </FilterChip>
           </div>
         </FilterSection>
 
@@ -194,7 +204,7 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
                     }
                     {/* Rarity icon — top right */}
                     {rarityIcon && (
-                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 45, objectFit: "contain" }} />
+                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 18, objectFit: "contain" }} />
                     )}
                     {/* Limited badge */}
                     {m.is_limited && (
