@@ -85,7 +85,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
     <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
       {/* ── LEFT — Full height Memoria artwork ── */}
-      <div style={{ width: 380, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
+      <div style={{ width: "35%", flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
         {/* Grid overlay */}
         <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
