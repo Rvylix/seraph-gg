@@ -121,7 +121,17 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
 
     const { data: squad, error: squadErr } = await supabase
       .from("squads")
-      .insert({ name: name.trim(), description: desc.trim(), submitted_by: submitter.trim(), category: "pve", is_approved: false } as any)
+      .insert({ 
+        name: name.trim(), 
+        purpose: "PvE General",
+        description: desc.trim(), 
+        submitted_by: submitter.trim(),
+        author_name: submitter.trim(),
+        strategy_note: desc.trim(),
+        tags: [],
+        category: "pve", 
+        is_approved: false 
+      } as any)
       .select().single() as any;
 
     if (squadErr || !squad) { setError(`Failed to submit: ${squadErr?.message ?? "Unknown error"}`); setSubmitting(false); return; }
