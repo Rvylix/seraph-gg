@@ -177,7 +177,15 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
 
         {/* Memoria name */}
         <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 8 }}>// Memoria</p>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 6, lineHeight: 1.15 }}>{m.name}</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 8, lineHeight: 1.15 }}>{m.name}</h1>
+        {m.released_at && (
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 12, padding: "4px 10px", borderRadius: 4, background: "rgba(34,204,102,0.08)", border: "0.5px solid rgba(34,204,102,0.2)" }}>
+            <span style={{ fontSize: 9, color: "#22CC66", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "monospace" }}>Released</span>
+            <span style={{ fontSize: 11, color: "#22CC66", fontFamily: "monospace" }}>
+              {new Date(m.released_at).toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" })}
+            </span>
+          </div>
+        )}
         <p style={{ fontSize: 13, color: "var(--hbr-muted)", lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>{m.skill_desc}</p>
 
         {/* STATS */}
