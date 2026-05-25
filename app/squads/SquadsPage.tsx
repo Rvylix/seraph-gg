@@ -172,7 +172,10 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
 
     if (slotRows.length === 0) { setError("Add at least one Memoria."); setSubmitting(false); return; }
 
-    if (slotRows.length > 0) await supabase.from("squad_slots").insert(slotRows as any);
+    if (slotRows.length > 0) {
+      const { error: slotErr } = await supabase.from("squad_slots").insert(slotRows as any);
+      if (slotErr) { setError(`Slot error: ${slotErr.message}`); setSubmitting(false); return; }
+    }
 
     setSubmitting(false); setDone(true);
   }
