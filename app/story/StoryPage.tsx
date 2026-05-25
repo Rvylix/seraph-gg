@@ -176,7 +176,7 @@ export function StoryPage({ chapters }: { chapters: Chapter[] }) {
             <p style={{ fontSize: 11, marginTop: 6, opacity: 0.6 }}>Add chapters in Supabase → story_chapters table.</p>
           </div>
         )}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 12 }}>
+        <div className="story-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 12 }}>
           {filtered.map(chapter => (
             <ChapterCard key={chapter.id} chapter={chapter} />
           ))}

@@ -31,13 +31,13 @@ export function UnitsGrid({ units }: { units: any[] }) {
             <img src={artwork} alt={activeCompany} style={{
               position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
               width: "100%", height: "100%",
-              objectFit: "cover", objectPosition: "right center",
+              objectFit: "cover", objectPosition: "center top",
               zIndex: 0,
             }} />
             {/* Clean gradient — solid left, fully transparent right */}
             <div style={{
               position: "absolute", inset: 0, zIndex: 1,
-              background: "linear-gradient(to right, #0F0F1A 0%, #0F0F1A 20%, rgba(15,15,26,0.95) 35%, rgba(15,15,26,0.6) 55%, rgba(15,15,26,0.1) 80%, transparent 100%)",
+              background: "linear-gradient(to right, #0F0F1A 0%, #0F0F1A 15%, rgba(15,15,26,0.8) 28%, rgba(15,15,26,0.2) 50%, transparent 75%)",
             }} />
             {/* Bottom fade into tabs */}
             <div style={{
@@ -67,11 +67,11 @@ export function UnitsGrid({ units }: { units: any[] }) {
             <>
               <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: "var(--hbr-red)", textTransform: "uppercase", marginBottom: 10 }}>// Roster</p>
               <h1 style={{ fontSize: 36, fontWeight: 700, color: "#fff", marginBottom: 6, lineHeight: 1 }}>Units</h1>
-              <p style={{ fontSize: 13, color: "var(--hbr-muted)" }}>{units.length} characters · Select a company to filter</p>
+              <p style={{ fontSize: 13, color: "var(--hbr-muted)" }}>{units.length} characters · Select a squad to filter</p>
             </>
           ) : (
             <>
-              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Squad</p>
+              <p style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: "0.2em", color: accent, textTransform: "uppercase", marginBottom: 12 }}>// Company</p>
               <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
                 {logo && (
                   <img src={logo} alt={activeCompany} style={{ height: 56, objectFit: "contain", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))" }} />
@@ -93,8 +93,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
         display: "flex", gap: 0,
         borderBottom: "0.5px solid var(--hbr-border)",
         background: "var(--hbr-surface)",
-        overflowX: "auto",
-        position: "sticky", top: 49, zIndex: 10,
+        position: "sticky", top: 49, zIndex: 10, overflowX: "auto",
       }}>
         {companies.map((c) => {
           const isActive = activeCompany === c;
@@ -115,7 +114,7 @@ export function UnitsGrid({ units }: { units: any[] }) {
       </div>
 
       {/* ── UNIT GRID ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10, padding: 20 }}>
+      <div className="units-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10, padding: 20 }}>
         {filtered.map((unit) => (
           <Link key={unit.id} href={`/units/profile?id=${unit.id}`} style={{ textDecoration: "none" }}>
             <div style={{

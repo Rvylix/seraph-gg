@@ -156,7 +156,7 @@ export function EventsPage({ events }: { events: Event[] }) {
             No events in this category.
           </div>
         )}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 14 }}>
+        <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 14 }}>
           {filtered.map(event => (
             <EventCard key={event.id} event={event} />
           ))}

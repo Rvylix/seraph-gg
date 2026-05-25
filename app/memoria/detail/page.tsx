@@ -82,10 +82,10 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
   const exGroups   = groupSkills(exSkills);
 
   return (
-    <div style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
+    <div className="memoria-detail-layout" style={{ display: "flex", height: "calc(100vh - 49px)", background: "var(--hbr-bg)", overflow: "hidden" }}>
 
       {/* ── LEFT — Full height Memoria artwork ── */}
-      <div style={{ width: 380, flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
+      <div style={{ width: "40%", flexShrink: 0, position: "relative", background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", overflow: "hidden" }}>
 
         {/* Grid overlay */}
         <div className="bg-hbr-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }} />
@@ -116,7 +116,7 @@ export default async function MemoriaDetailPage({ searchParams }: Props) {
         {/* Rarity icon — top right, big */}
         {rarityIcon && (
           <div style={{ position: "absolute", top: 12, right: 16, zIndex: 10 }}>
-            <img src={rarityIcon} alt={m.rarity} style={{ height: 48, objectFit: "contain" }} />
+            <img src={rarityIcon} alt={m.rarity} style={{ height: 70, objectFit: "contain" }} />
           </div>
         )}
 

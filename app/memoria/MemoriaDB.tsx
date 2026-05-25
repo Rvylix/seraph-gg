@@ -66,7 +66,7 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
   const hasFilters = rarities.length || roles.length || elements.length || attackTypes.length || unitFilter || limitedOnly || resonanceOnly || unisonOnly || search;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "calc(100vh - 100px)" }}>
+    <div className="memoria-db-layout" style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "calc(100vh - 100px)" }}>
 
       {/* ── SIDEBAR ── */}
       <div style={{ background: "var(--hbr-surface)", borderRight: "0.5px solid var(--hbr-border)", padding: "20px 16px", overflowY: "auto" }}>
@@ -204,7 +204,7 @@ export function MemoriaDB({ memorias, units }: { memorias: any[]; units: any[] }
                     }
                     {/* Rarity icon — top right */}
                     {rarityIcon && (
-                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 18, objectFit: "contain" }} />
+                      <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 8, right: 8, height: 40, objectFit: "contain" }} />
                     )}
                     {/* Limited badge */}
                     {m.is_limited && (
