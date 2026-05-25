@@ -55,7 +55,7 @@ function SquadCard({ squad }: { squad: any }) {
       </div>
       <div style={{ padding: "12px 14px", display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
         {Array.from({ length: 6 }).map((_, i) => {
-          const slot = slots.find((s: any) => s.slot_index === i);
+          const slot = slots.find((s: any) => s.slot_index === i + 1);
           return <MemoriaSlot key={i} memoria={slot?.memorias ?? null} />;
         })}
       </div>
@@ -166,7 +166,7 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
     const slotRows = slots
       .map((m, i) => {
         if (!m?.id) return null;
-        return { squad_id: squad.id, slot_index: i, memoria_id: m.id };
+        return { squad_id: squad.id, slot_index: i + 1, memoria_id: m.id };
       })
       .filter(Boolean);
 
