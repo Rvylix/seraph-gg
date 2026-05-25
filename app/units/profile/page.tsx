@@ -121,7 +121,7 @@ export default async function UnitProfilePage(props: any) {
                     {/* Info */}
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                        {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ height: 16, objectFit: "contain", flexShrink: 0 }} />}
+                        {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ height: 32, objectFit: "contain", flexShrink: 0 }} />}
                         <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{m.name}</span>
                         {m.is_limited && <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 2, background: "rgba(200,160,80,0.1)", color: "#C8A050", flexShrink: 0 }}>Limited</span>}
                       </div>

@@ -78,7 +78,7 @@ function MemoriaCard({ m }: { m: any }) {
                 <span style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 700, color: RARITY_COLOR[m.rarity] ?? "#fff", opacity: 0.3 }}>{m.rarity}</span>
               </div>
           }
-          {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 6, right: 6, height: 14, objectFit: "contain" }} />}
+          {rarityIcon && <img src={rarityIcon} alt={m.rarity} style={{ position: "absolute", top: 6, right: 6, height: 32, objectFit: "contain" }} />}
         </div>
         {/* Info */}
         <div style={{ padding: "8px 10px" }}>
@@ -195,7 +195,7 @@ export function HomeClient({ chapters, newMemorias, events }: { chapters: any[];
           <img
             src="https://fesdcaexwcslmwipzzln.supabase.co/storage/v1/object/public/assets/logo/HBR-Logo.png"
             alt="Heaven Burns Red"
-            className="home-hero-logo" style={{ height: 780, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(204,34,34,0.3))" }}
+            className="home-hero-logo" style={{ height: 450, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(204,34,34,0.3))" }}
           />
         </div>
       </div>
