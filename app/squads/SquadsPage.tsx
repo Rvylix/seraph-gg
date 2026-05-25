@@ -7,7 +7,7 @@ import { RARITY_ICON, RARITY_COLOR, ELEMENT_ICON, ELEMENT_COLOR, ROLE_COLOR } fr
 // ── Memoria mini card in squad ────────────────────────────────
 function MemoriaSlot({ memoria }: { memoria: any }) {
   if (!memoria) return (
-    <div style={{ aspectRatio: "1", borderRadius: 6, background: "rgba(255,255,255,0.03)", border: "0.5px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ aspectRatio: "2/3", borderRadius: 6, background: "rgba(255,255,255,0.03)", border: "0.5px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <span style={{ fontSize: 18, color: "rgba(255,255,255,0.1)" }}>+</span>
     </div>
   );
@@ -15,7 +15,7 @@ function MemoriaSlot({ memoria }: { memoria: any }) {
   const unitId = memoria.unit_id;
   return (
     <Link href={unitId ? `/memoria/detail?id=${memoria.id}&from=${unitId}` : `/memoria/detail?id=${memoria.id}`} style={{ textDecoration: "none" }}>
-      <div style={{ position: "relative", aspectRatio: "1", borderRadius: 6, overflow: "hidden", background: memoria.rarity === "SS" || memoria.rarity === "SSR" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", border: `0.5px solid ${memoria.rarity === "SS" || memoria.rarity === "SSR" ? "rgba(200,160,80,0.25)" : "rgba(120,100,200,0.2)"}`, cursor: "pointer" }}>
+      <div style={{ position: "relative", aspectRatio: "2/3", borderRadius: 6, overflow: "hidden", background: memoria.rarity === "SS" || memoria.rarity === "SSR" ? "rgba(200,160,80,0.08)" : "rgba(120,100,200,0.08)", border: `0.5px solid ${memoria.rarity === "SS" || memoria.rarity === "SSR" ? "rgba(200,160,80,0.25)" : "rgba(120,100,200,0.2)"}`, cursor: "pointer" }}>
         {memoria.image_url
           ? <img src={memoria.image_url} alt={memoria.name} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
           : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -27,7 +27,7 @@ function MemoriaSlot({ memoria }: { memoria: any }) {
           <img src={ELEMENT_ICON[memoria.element]} alt={memoria.element} style={{ position: "absolute", top: 4, left: 4, width: 14, height: 14, objectFit: "contain" }} />
         )}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)", padding: "16px 4px 4px" }}>
-          <div style={{ fontSize: 8, color: "#fff", textAlign: "center", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 2px" }}>{memoria.name}</div>
+          <div style={{ fontSize: 9, color: "#fff", textAlign: "center", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 4px" }}>{memoria.name}</div>
         </div>
       </div>
     </Link>
@@ -53,7 +53,7 @@ function SquadCard({ squad }: { squad: any }) {
           <span style={{ fontSize: 9, color: "var(--hbr-muted)" }}>{new Date(squad.created_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}</span>
         </div>
       </div>
-      <div style={{ padding: "12px 14px", display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
+      <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
         {Array.from({ length: 6 }).map((_, i) => {
           const slot = slots.find((s: any) => s.slot_index === i + 1);
           return <MemoriaSlot key={i} memoria={slot?.memorias ?? null} />;
@@ -257,7 +257,7 @@ export function SquadsPage({ squads, memorias }: { squads: any[]; memorias: any[
           <p style={{ fontSize: 12, opacity: 0.6 }}>Be the first to submit a squad build!</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(560px, 1fr))", gap: 14 }}>
           {squads.map(squad => <SquadCard key={squad.id} squad={squad} />)}
         </div>
       )}
