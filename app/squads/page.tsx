@@ -6,13 +6,13 @@ export const dynamic = "force-dynamic";
 export default async function Squads() {
   const { data: squads } = await supabase
     .from("squads")
-    .select("*, squad_slots(*, memorias(id, name, rarity, image_url, role, element, attack_type, unit_id, units!memorias_unit_id_fkey(name)))")
+    .select(`*, squad_slots(slot_index, memoria_id, memorias(id, name, rarity, image_url, role, element, attack_type, unit_id))`)
     .eq("is_approved", true)
     .order("created_at", { ascending: false });
 
   const { data: memorias } = await supabase
     .from("memorias")
-    .select("id, name, rarity, image_url, role, element, attack_type, units!memorias_unit_id_fkey(name)")
+    .select("id, name, rarity, image_url, role, element, attack_type, unit_id, units!memorias_unit_id_fkey(id, name)")
     .order("rarity_order")
     .order("name");
 
