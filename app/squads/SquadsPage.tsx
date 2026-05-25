@@ -124,7 +124,7 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
       .insert({ name: name.trim(), description: desc.trim(), submitted_by: submitter.trim(), category: "pve", is_approved: false } as any)
       .select().single() as any;
 
-    if (squadErr || !squad) { setError("Failed to submit. Please try again."); setSubmitting(false); return; }
+    if (squadErr || !squad) { setError(`Failed to submit: ${squadErr?.message ?? "Unknown error"}`); setSubmitting(false); return; }
 
     const slotRows = slots
       .map((memoriaId, i) => ({ squad_id: squad.id, slot_index: i, memoria_id: memoriaId || null }))
