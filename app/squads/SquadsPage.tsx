@@ -164,10 +164,11 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
     if (squadErr || !squad) { setError(`Failed to submit: ${squadErr?.message ?? "Unknown error"}`); setSubmitting(false); return; }
 
     const slotRows = slots
-      .map((m, i) => ({ squad_id: squad.id, slot_index: i, memoria_id: m?.id ?? null, unit_id: m?.unit_id ?? "00000000-0000-0000-0000-000000000000" }))
-      .filter(s => s.memoria_id);
-
-    console.log("Inserting slots:", slotRows);
+      .map((m, i) => {
+        if (!m?.id || !m?.unit_id) return null;
+        return { squad_id: squad.id, slot_index: i, memoria_id: m.id, unit_id: m.unit_id };
+      })
+      .filter(Boolean);
 
     if (slotRows.length > 0) await supabase.from("squad_slots").insert(slotRows as any);
 
