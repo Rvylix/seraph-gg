@@ -165,10 +165,16 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
 
     const slotRows = slots
       .map((m, i) => {
-        if (!m?.id || !m?.unit_id) return null;
-        return { squad_id: squad.id, slot_index: i, memoria_id: m.id, unit_id: m.unit_id };
+        if (!m?.id) return null;
+        // unit_id fallback — get from the memorias prop
+        const fullMem = (memorias as any[]).find((x: any) => x.id === m.id);
+        const unitId = m.unit_id ?? fullMem?.unit_id;
+        if (!unitId) return null;
+        return { squad_id: squad.id, slot_index: i, memoria_id: m.id, unit_id: unitId };
       })
       .filter(Boolean);
+    
+    if (slotRows.length === 0) { setError("Could not find unit data for selected Memorias. Please try again."); setSubmitting(false); return; }
 
     if (slotRows.length > 0) await supabase.from("squad_slots").insert(slotRows as any);
 
