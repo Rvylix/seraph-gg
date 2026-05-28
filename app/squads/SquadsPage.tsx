@@ -202,7 +202,7 @@ function SubmitForm({ memorias, onClose }: { memorias: any[]; onClose: () => voi
         </div>
         <div>
           <label style={{ fontSize: 10, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: 6 }}>Your Name *</label>
-          <input value={submitter} onChange={e => setSubmitter(e.target.value)} placeholder="e.g. Remy" style={{ width: "100%", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4, color: "#fff", fontSize: 13, padding: "8px 12px", outline: "none" }} />
+          <input value={submitter} onChange={e => setSubmitter(e.target.value)} placeholder="In-game Name" style={{ width: "100%", background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", borderRadius: 4, color: "#fff", fontSize: 13, padding: "8px 12px", outline: "none" }} />
         </div>
         <div>
           <label style={{ fontSize: 10, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: 6 }}>Strategy Notes</label>
