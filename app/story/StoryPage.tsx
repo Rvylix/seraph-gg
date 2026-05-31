@@ -84,11 +84,10 @@ function TimelineRow({ label, color, chapters }: { label: string; color: string;
 
   if (chapters.length === 0) return null;
 
-  const CARD_H  = 188; // card height approx
-  const GAP     = 20;  // gap between card and line
+  const CARD_H  = 200;
+  const GAP     = 20;
   const DOT     = 10;
-  const LINE_H  = 2;
-  const TOTAL_H = CARD_H * 2 + GAP * 2 + DOT + LINE_H;
+  const TOTAL   = CARD_H + GAP + DOT + GAP + CARD_H + 32;
 
   return (
     <div style={{ marginBottom: 48 }}>
@@ -106,8 +105,9 @@ function TimelineRow({ label, color, chapters }: { label: string; color: string;
       </div>
 
       {/* Scrollable timeline */}
-      <div style={{ overflowX: "auto", overflowY: "visible", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8, paddingTop: 8 }} ref={scrollRef}>
-        <div style={{ display: "flex", alignItems: "stretch", gap: 0, position: "relative", minWidth: "max-content", paddingTop: 8 }}>
+      <div style={{ height: TOTAL, position: "relative" }}>
+        <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none" }}>
+        <div style={{ display: "flex", alignItems: "stretch", gap: 0, position: "relative", minWidth: "max-content", height: "100%" }}>
           {chapters.map((c, i) => {
             const isTop = i % 2 === 0;
             return (
@@ -124,9 +124,9 @@ function TimelineRow({ label, color, chapters }: { label: string; color: string;
                 {/* Center dot + line */}
                 <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", height: DOT }}>
                   {/* Left line segment */}
-                  <div style={{ position: "absolute", left: 0, right: "50%", height: LINE_H, background: `${color}33`, top: "50%", transform: "translateY(-50%)" }} />
+                  <div style={{ position: "absolute", left: 0, right: "50%", height: 2, background: `${color}33`, top: "50%", transform: "translateY(-50%)" }} />
                   {/* Right line segment */}
-                  <div style={{ position: "absolute", left: "50%", right: 0, height: LINE_H, background: `${color}33`, top: "50%", transform: "translateY(-50%)" }} />
+                  <div style={{ position: "absolute", left: "50%", right: 0, height: 2, background: `${color}33`, top: "50%", transform: "translateY(-50%)" }} />
                   {/* Dot */}
                   <div style={{ width: DOT, height: DOT, borderRadius: "50%", background: c.is_released ? color : "var(--hbr-border)", border: `2px solid var(--hbr-bg)`, zIndex: 2, position: "relative", flexShrink: 0 }} />
                 </div>
@@ -142,6 +142,7 @@ function TimelineRow({ label, color, chapters }: { label: string; color: string;
               </div>
             );
           })}
+        </div>
         </div>
       </div>
     </div>

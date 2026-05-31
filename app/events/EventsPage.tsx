@@ -99,6 +99,7 @@ function TimelineRow({ label, color, events }: { label: string; color: string; e
   const CARD_H = 172;
   const GAP    = 20;
   const DOT    = 10;
+  const TOTAL  = CARD_H + GAP + DOT + GAP + CARD_H + 32;
 
   return (
     <div style={{ marginBottom: 48 }}>
@@ -114,8 +115,9 @@ function TimelineRow({ label, color, events }: { label: string; color: string; e
         </div>
       </div>
 
-      <div style={{ overflowX: "auto", overflowY: "visible", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8, paddingTop: 8 }} ref={scrollRef}>
-        <div style={{ display: "flex", gap: 0, position: "relative", minWidth: "max-content", paddingTop: 8 }}>
+      <div style={{ height: TOTAL, position: "relative" }}>
+        <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none" }}>
+        <div style={{ display: "flex", gap: 0, position: "relative", minWidth: "max-content", height: "100%", alignItems: "stretch" }}>
           {events.map((e, i) => {
             const isTop = i % 2 === 0;
             return (
@@ -136,6 +138,7 @@ function TimelineRow({ label, color, events }: { label: string; color: string; e
               </div>
             );
           })}
+        </div>
         </div>
       </div>
     </div>
