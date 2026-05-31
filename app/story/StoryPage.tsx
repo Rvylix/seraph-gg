@@ -106,8 +106,8 @@ function TimelineRow({ label, color, chapters }: { label: string; color: string;
       </div>
 
       {/* Scrollable timeline */}
-      <div ref={scrollRef} style={{ overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8 }}>
-        <div style={{ display: "flex", alignItems: "stretch", gap: 0, position: "relative", minWidth: "max-content" }}>
+      <div style={{ overflowX: "auto", overflowY: "visible", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8, paddingTop: 8 }} ref={scrollRef}>
+        <div style={{ display: "flex", alignItems: "stretch", gap: 0, position: "relative", minWidth: "max-content", paddingTop: 8 }}>
           {chapters.map((c, i) => {
             const isTop = i % 2 === 0;
             return (

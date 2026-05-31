@@ -114,8 +114,8 @@ function TimelineRow({ label, color, events }: { label: string; color: string; e
         </div>
       </div>
 
-      <div ref={scrollRef} style={{ overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8 }}>
-        <div style={{ display: "flex", gap: 0, position: "relative", minWidth: "max-content" }}>
+      <div style={{ overflowX: "auto", overflowY: "visible", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8, paddingTop: 8 }} ref={scrollRef}>
+        <div style={{ display: "flex", gap: 0, position: "relative", minWidth: "max-content", paddingTop: 8 }}>
           {events.map((e, i) => {
             const isTop = i % 2 === 0;
             return (
