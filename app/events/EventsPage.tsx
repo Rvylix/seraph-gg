@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type Event = {
   id: string;
@@ -14,7 +14,6 @@ type Event = {
 
 function useCountdown(target: string) {
   const [timeLeft, setTimeLeft] = useState("");
-
   useEffect(() => {
     function calc() {
       const diff = new Date(target).getTime() - Date.now();
@@ -29,7 +28,6 @@ function useCountdown(target: string) {
     const t = setInterval(calc, 1000);
     return () => clearInterval(t);
   }, [target]);
-
   return timeLeft;
 }
 
@@ -38,71 +36,69 @@ function EventCard({ event }: { event: Event }) {
   const isUpcoming = event.status === "upcoming";
   const isEnded    = event.status === "ended";
   const countdown  = useCountdown(isLive ? event.ends_at : event.starts_at);
-
   const statusColor = isLive ? "#22CC66" : isUpcoming ? "#C8A050" : "#6A6A80";
-  const statusBg    = isLive ? "rgba(34,204,102,0.12)" : isUpcoming ? "rgba(200,160,80,0.12)" : "rgba(100,100,100,0.12)";
-  const statusLabel = isLive ? "LIVE" : isUpcoming ? "SOON" : "ENDED";
+  const statusBg    = isLive ? "rgba(34,204,102,0.12)" : isUpcoming ? "rgba(200,160,80,0.12)" : "rgba(100,100,100,0.08)";
+  const borderColor = isLive ? "rgba(34,204,102,0.35)" : isUpcoming ? "rgba(200,160,80,0.25)" : "var(--hbr-border)";
 
   return (
     <div style={{
+      width: 240, flexShrink: 0,
       background: "var(--hbr-card)",
-      border: `0.5px solid ${isLive ? "rgba(34,204,102,0.25)" : "var(--hbr-border)"}`,
-      borderLeft: `3px solid ${statusColor}`,
-      borderRadius: 8, overflow: "hidden",
-      opacity: isEnded ? 0.5 : 1,
+      border: `0.5px solid ${borderColor}`,
+      borderRadius: 10, overflow: "hidden",
+      opacity: isEnded ? 0.45 : 1,
+      display: "flex", flexDirection: "column",
     }}>
       {/* Event image */}
-      {event.image_url && (
-        <img src={event.image_url} alt={event.name} style={{ width: "100%", height: 140, objectFit: "cover", objectPosition: "center" }} />
-      )}
+      <div style={{ height: 110, position: "relative", overflow: "hidden", background: statusBg, flexShrink: 0 }}>
+        {event.image_url
+          ? <img src={event.image_url} alt={event.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 32, opacity: 0.15 }}>⚔</span>
+            </div>
+        }
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }} />
 
-      <div style={{ padding: "16px 20px" }}>
-
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10, gap: 12 }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: "#fff", lineHeight: 1.3, flex: 1 }}>{event.name}</h2>
-          <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 3, background: statusBg, color: statusColor, fontWeight: 700, letterSpacing: "0.08em", flexShrink: 0 }}>
-            {statusLabel}
+        {/* Status badge */}
+        <div style={{ position: "absolute", top: 8, left: 8 }}>
+          <span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 3, background: statusBg, color: statusColor, fontWeight: 700, letterSpacing: "0.08em", backdropFilter: "blur(4px)", border: `0.5px solid ${statusColor}44` }}>
+            {isLive ? "LIVE" : isUpcoming ? "SOON" : "ENDED"}
           </span>
         </div>
 
-        {/* Description */}
-        {event.description && (
-          <p style={{ fontSize: 12, color: "var(--hbr-muted)", lineHeight: 1.6, marginBottom: 14 }}>
-            {event.description}
-          </p>
-        )}
-
-        {/* Countdown */}
+        {/* Countdown on image */}
         {!isEnded && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, padding: "8px 12px", background: "rgba(0,0,0,0.2)", borderRadius: 4 }}>
-            <span style={{ fontSize: 10, color: "var(--hbr-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              {isLive ? "Ends in" : "Starts in"}
-            </span>
-            <span style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 700, color: isLive ? "#22CC66" : "#C8A050" }}>
-              {countdown}
-            </span>
+          <div style={{ position: "absolute", bottom: 8, left: 10, right: 10 }}>
+            <div style={{ fontFamily: "monospace", fontSize: 11, fontWeight: 700, color: statusColor }}>
+              {isLive ? "⏱ " : "⏳ "}{countdown}
+            </div>
           </div>
         )}
+      </div>
 
+      {/* Info */}
+      <div style={{ padding: "10px 12px", flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>{event.name}</div>
+        {event.description && (
+          <div style={{ fontSize: 10, color: "var(--hbr-muted)", lineHeight: 1.5 }}>
+            {event.description.length > 60 ? event.description.slice(0, 60) + "..." : event.description}
+          </div>
+        )}
         {/* Date range */}
-        <div style={{ fontSize: 10, color: "var(--hbr-muted)", marginBottom: 14, fontFamily: "monospace" }}>
-          {new Date(event.starts_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}
+        <div style={{ fontSize: 9, color: "var(--hbr-muted)", fontFamily: "monospace", marginTop: "auto" }}>
+          {new Date(event.starts_at).toLocaleDateString("en-MY", { day: "numeric", month: "short" })}
           {" → "}
-          {new Date(event.ends_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}
+          {new Date(event.ends_at).toLocaleDateString("en-MY", { day: "numeric", month: "short" })}
         </div>
-
         {/* Rewards */}
         {event.rewards && event.rewards.length > 0 && (
-          <div>
-            <p style={{ fontSize: 9, color: "var(--hbr-muted)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>Rewards</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-              {event.rewards.map((r: string, i: number) => (
-                <span key={i} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 3, background: "rgba(255,255,255,0.05)", color: "var(--hbr-silver)", border: "0.5px solid var(--hbr-border)" }}>
-                  {r}
-                </span>
-              ))}
-            </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            {event.rewards.slice(0, 3).map((r, i) => (
+              <span key={i} style={{ fontSize: 8, padding: "2px 6px", borderRadius: 2, background: "rgba(255,255,255,0.05)", color: "var(--hbr-muted)", border: "0.5px solid var(--hbr-border)" }}>{r}</span>
+            ))}
+            {event.rewards.length > 3 && (
+              <span style={{ fontSize: 8, padding: "2px 6px", borderRadius: 2, color: "var(--hbr-muted)" }}>+{event.rewards.length - 3}</span>
+            )}
           </div>
         )}
       </div>
@@ -110,58 +106,60 @@ function EventCard({ event }: { event: Event }) {
   );
 }
 
-export function EventsPage({ events }: { events: Event[] }) {
-  const [tab, setTab] = useState<"all" | "live" | "upcoming" | "ended">("all");
+function TimelineRow({ label, color, events }: { label: string; color: string; events: Event[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
 
+  function scroll(dir: "left" | "right") {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: dir === "right" ? 520 : -520, behavior: "smooth" });
+  }
+
+  if (events.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: 36 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 3, height: 16, borderRadius: 2, background: color }} />
+          <span style={{ fontFamily: "monospace", fontSize: 11, letterSpacing: "0.15em", color, textTransform: "uppercase" }}>{label}</span>
+          <span style={{ fontSize: 10, color: "var(--hbr-muted)", fontFamily: "monospace" }}>{events.length} events</span>
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          <button onClick={() => scroll("left")} style={{ width: 28, height: 28, borderRadius: 4, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", color: "var(--hbr-muted)", cursor: "pointer", fontSize: 12 }}>←</button>
+          <button onClick={() => scroll("right")} style={{ width: 28, height: 28, borderRadius: 4, background: "var(--hbr-card)", border: "0.5px solid var(--hbr-border)", color: "var(--hbr-muted)", cursor: "pointer", fontSize: 12 }}>→</button>
+        </div>
+      </div>
+
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", top: 55, left: 0, right: 0, height: 1, background: `linear-gradient(to right, ${color}44, ${color}22, transparent)`, zIndex: 0, pointerEvents: "none" }} />
+        <div ref={scrollRef} style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 12, scrollbarWidth: "none", msOverflowStyle: "none", position: "relative", zIndex: 1 }}>
+          {events.map((e) => (
+            <div key={e.id} style={{ position: "relative", flexShrink: 0 }}>
+              <div style={{ position: "absolute", top: 54, left: "50%", transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: e.status === "live" ? "#22CC66" : e.status === "upcoming" ? "#C8A050" : "var(--hbr-border)", border: "2px solid var(--hbr-bg)", zIndex: 2 }} />
+              <EventCard event={e} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function EventsPage({ events }: { events: Event[] }) {
   const live     = events.filter(e => e.status === "live");
   const upcoming = events.filter(e => e.status === "upcoming");
   const ended    = events.filter(e => e.status === "ended");
 
-  const filtered = tab === "all" ? events
-    : tab === "live"     ? live
-    : tab === "upcoming" ? upcoming
-    : ended;
-
-  const tabs = [
-    { key: "all",      label: "All",      count: events.length },
-    { key: "live",     label: "Live",     count: live.length },
-    { key: "upcoming", label: "Upcoming", count: upcoming.length },
-    { key: "ended",    label: "Ended",    count: ended.length },
-  ];
-
   return (
-    <div>
-      {/* Tabs */}
-      <div style={{ display: "flex", borderBottom: "0.5px solid var(--hbr-border)", background: "var(--hbr-surface)" }}>
-        {tabs.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key as any)} style={{
-            fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
-            padding: "10px 20px", cursor: "pointer", background: "transparent", border: "none",
-            borderBottom: tab === t.key ? "2px solid var(--hbr-red)" : "2px solid transparent",
-            color: tab === t.key ? "var(--hbr-red)" : "var(--hbr-muted)",
-            display: "flex", alignItems: "center", gap: 6,
-          }}>
-            {t.label}
-            <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 2, background: tab === t.key ? "var(--hbr-red)" : "rgba(255,255,255,0.08)", color: tab === t.key ? "#fff" : "var(--hbr-muted)" }}>
-              {t.count}
-            </span>
-          </button>
-        ))}
-      </div>
+    <div style={{ padding: "28px 24px" }}>
+      <TimelineRow label="Live Now"  color="#22CC66" events={live} />
+      <TimelineRow label="Upcoming"  color="#C8A050" events={upcoming} />
+      <TimelineRow label="Ended"     color="#6A6A80" events={ended} />
 
-      {/* Event grid */}
-      <div style={{ padding: 24 }}>
-        {filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "var(--hbr-muted)", fontSize: 13 }}>
-            No events in this category.
-          </div>
-        )}
-        <div className="events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 14 }}>
-          {filtered.map(event => (
-            <EventCard key={event.id} event={event} />
-          ))}
+      {events.length === 0 && (
+        <div style={{ textAlign: "center", padding: "80px 0", color: "var(--hbr-muted)" }}>
+          <p style={{ fontSize: 13 }}>No events added yet.</p>
         </div>
-      </div>
+      )}
     </div>
   );
 }
